@@ -2,11 +2,12 @@
 -- Tienda Virtual - Esquema inicial para TiDB
 -- ==================================================
 
-CREATE DATABASE IF NOT EXISTS tienda_virtual
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE tienda_virtual;
+-- IMPORTANTE:
+-- Crea/selecciona la base de datos manualmente en TiDB Cloud o en tu cliente MySQL
+-- antes de ejecutar este script.
+-- Ejemplo: CREATE DATABASE IF NOT EXISTS `tienda_virtual` CHARACTER SET utf8mb4;
+-- Ejemplo: USE `tienda_virtual`;
+-- Si el nombre de tu base de datos contiene guiones, usa backticks: USE `tienda-virtual-db`;
 
 -- ==================================================
 -- Tabla: roles

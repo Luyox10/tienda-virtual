@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createOrder } from './services/api'
 import { productImage } from './productImage'
 
-export default function Cart({ cart, products, token, onUpdate, onClear, onBack, onOrder }) {
+export default function Cart({ cart, products, isAuthenticated, token, onUpdate, onClear, onBack, onLogin, onOrder }) {
   const [error, setError] = useState(null)
 
   const findProduct = (id) => products.find((p) => p.id === Number(id))
@@ -25,6 +25,10 @@ export default function Cart({ cart, products, token, onUpdate, onClear, onBack,
   const removeItem = (id) => onUpdate(id, 0)
 
   const checkout = async () => {
+    if (!isAuthenticated) {
+      onLogin()
+      return
+    }
     if (cart.length === 0) return
     const items = cart.map((i) => ({
       product_id: i.product_id,
@@ -103,7 +107,7 @@ export default function Cart({ cart, products, token, onUpdate, onClear, onBack,
               <span className="cart-total-amount">S/ {total.toFixed(2)}</span>
             </div>
             <button className="btn" onClick={checkout}>
-              IR A PAGAR
+              {isAuthenticated ? 'IR A PAGAR' : 'Iniciar sesión para pagar'}
             </button>
           </div>
         </>

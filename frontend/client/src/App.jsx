@@ -14,13 +14,14 @@ import './styles.css'
 
 function App() {
   const { isAuthenticated, user, token, logout } = useAuth()
-  const [view, setView] = useState('login')
+  const [view, setView] = useState('home')
+  const [returnTo, setReturnTo] = useState(null)
   const [products, setProducts] = useState([])
   const [shifts, setShifts] = useState([])
   const [current, setCurrent] = useState(null)
   const [error, setError] = useState(null)
   const [currentOrder, setCurrentOrder] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('cart')
     return saved ? JSON.parse(saved) : []
@@ -31,7 +32,6 @@ function App() {
   }, [cart])
 
   useEffect(() => {
-    if (!isAuthenticated) return
     setLoading(true)
     setError(null)
     Promise.all([getProducts(), getShifts(), getCurrentShift()])
@@ -42,20 +42,32 @@ function App() {
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
-  }, [isAuthenticated])
+  }, [])
 
-  const handleLogin = () => setView('home')
-  const handleRegister = () => setView('home')
+  const handleLogin = () => {
+    setView(returnTo || 'home')
+    setReturnTo(null)
+  }
+  const handleRegister = () => {
+    setView(returnTo || 'home')
+    setReturnTo(null)
+  }
   const handleLogout = () => {
     logout()
-    setView('login')
-    setProducts([])
-    setShifts([])
-    setCurrent(null)
+    setView('home')
     setCurrentOrder(null)
   }
   const navigateTo = (v) => {
     setView(v)
+    setCurrentOrder(null)
+  }
+  const requireAuth = (v) => {
+    if (isAuthenticated) {
+      setView(v)
+    } else {
+      setReturnTo(v)
+      setView('login')
+    }
     setCurrentOrder(null)
   }
 
@@ -95,73 +107,54 @@ function App() {
 
   const clearCart = () => setCart([])
 
-  if (isAuthenticated) {
-    return (
-      <div className="container app-container">
-        <header className="app-header">
-          <div className="inner">
-            <div className="brand">
-              <span className="brand-dot" />
-              DeliTurnos
-            </div>
-            <nav className="nav" aria-label="Navegación superior">
-              <span className="user-pill">{user.email}</span>
-              <button
-                className={view === 'home' ? 'btn active' : 'btn'}
-                onClick={() => navigateTo('home')}
-                aria-label="Inicio"
-              >
-                Inicio
-              </button>
-              <button
-                className={view === 'cart' ? 'btn active' : 'btn'}
-                onClick={() => navigateTo('cart')}
-                aria-label="Carrito"
-              >
-                Carrito ({cart.reduce((a, i) => a + i.quantity, 0)})
-              </button>
-              <button
-                className={view === 'orders' ? 'btn active' : 'btn'}
-                onClick={() => navigateTo('orders')}
-                aria-label="Pedidos"
-              >
-                Pedidos
-              </button>
-              <button onClick={handleLogout} className="btn secondary" aria-label="Cerrar sesión">Salir</button>
-            </nav>
-          </div>
-        </header>
+  const renderMain = () => {
+    if (view === 'login' || view === 'register') {
+      return (
+        <div className="auth-wrapper">
+          {view === 'login' ? (
+            <Login onToggle={() => setView('register')} onSuccess={handleLogin} />
+          ) : (
+            <Register onToggle={() => setView('login')} onSuccess={handleRegister} />
+          )}
+        </div>
+      )
+    }
 
-        {error && <p className="error" role="alert">{error}</p>}
-        {loading && <Loading message="Cargando productos..." />}
+    if (view === 'home') {
+      return (
+        <Home
+          products={products}
+          shifts={shifts}
+          current={current}
+          cart={cart}
+          onAdd={addToCart}
+          setView={setView}
+        />
+      )
+    }
 
-        {!loading && view === 'home' && (
-          <Home
-            products={products}
-            shifts={shifts}
-            current={current}
-            cart={cart}
-            onAdd={addToCart}
-            setView={setView}
-          />
-        )}
+    if (view === 'cart') {
+      return (
+        <Cart
+          cart={cart}
+          products={products}
+          isAuthenticated={isAuthenticated}
+          token={token}
+          onUpdate={updateCart}
+          onClear={clearCart}
+          onBack={() => setView('home')}
+          onLogin={() => requireAuth('cart')}
+          onOrder={(o) => {
+            setCurrentOrder(o)
+            setView('checkout')
+          }}
+        />
+      )
+    }
 
-        {view === 'cart' && (
-          <Cart
-            cart={cart}
-            products={products}
-            token={token}
-            onUpdate={updateCart}
-            onClear={clearCart}
-            onBack={() => setView('home')}
-            onOrder={(o) => {
-              setCurrentOrder(o)
-              setView('checkout')
-            }}
-          />
-        )}
-
-        {view === 'orders' && (
+    if (view === 'orders') {
+      if (isAuthenticated) {
+        return (
           <Orders
             token={token}
             onBack={() => setView('home')}
@@ -170,50 +163,92 @@ function App() {
               setView('checkout')
             }}
           />
-        )}
-
-        {view === 'checkout' && currentOrder && (
-          <Checkout
-            order={currentOrder}
-            token={token}
-            onDone={() => {
-              setView('orders')
-              setCurrentOrder(null)
-            }}
-            onBack={() => setView('orders')}
-          />
-        )}
-
-        <MobileNav
-          view={view}
-          onNavigate={navigateTo}
-          cartCount={cart.reduce((a, i) => a + i.quantity, 0)}
-          onLogout={handleLogout}
-        />
-      </div>
-    )
-  }
-
-  return (
-    <div className="container auth-container">
-      <div className="brand auth-brand">
-        <span className="brand-dot" />
-        DeliTurnos
-      </div>
-
-      {view === 'orders' ? (
+        )
+      }
+      return (
         <div className="card auth-message">
           <h2>Mis pedidos</h2>
-          <p>Regístrate o inicia sesión para consultar tus pedidos.</p>
+          <p>Inicia sesión para ver el registro de tus pedidos.</p>
           <button className="btn" onClick={() => setView('login')}>
             Iniciar sesión
           </button>
+          <button className="btn secondary" onClick={() => setView('home')}>
+            Volver al inicio
+          </button>
         </div>
-      ) : view === 'login' ? (
-        <Login onToggle={() => setView('register')} onSuccess={handleLogin} />
-      ) : (
-        <Register onToggle={() => setView('login')} onSuccess={handleRegister} />
-      )}
+      )
+    }
+
+    if (view === 'checkout') {
+      return currentOrder && isAuthenticated ? (
+        <Checkout
+          order={currentOrder}
+          token={token}
+          onDone={() => {
+            setView('orders')
+            setCurrentOrder(null)
+          }}
+          onBack={() => setView('orders')}
+        />
+      ) : null
+    }
+
+    return null
+  }
+
+  return (
+    <div className="container app-container">
+      <header className="app-header">
+        <div className="inner">
+          <div className="brand">
+            <span className="brand-dot" />
+            DeliTurnos
+          </div>
+          <nav className="nav" aria-label="Navegación superior">
+            {isAuthenticated && <span className="user-pill">{user.email}</span>}
+            <button
+              className={view === 'home' ? 'btn active' : 'btn'}
+              onClick={() => navigateTo('home')}
+              aria-label="Inicio"
+            >
+              Inicio
+            </button>
+            <button
+              className={view === 'cart' ? 'btn active' : 'btn'}
+              onClick={() => navigateTo('cart')}
+              aria-label="Carrito"
+            >
+              Carrito ({cart.reduce((a, i) => a + i.quantity, 0)})
+            </button>
+            <button
+              className={view === 'orders' ? 'btn active' : 'btn'}
+              onClick={() => requireAuth('orders')}
+              aria-label="Pedidos"
+            >
+              Pedidos
+            </button>
+            {isAuthenticated ? (
+              <button onClick={handleLogout} className="btn secondary" aria-label="Cerrar sesión">Salir</button>
+            ) : (
+              <button onClick={() => setView('login')} className="btn" aria-label="Iniciar sesión">Ingresar</button>
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {error && <p className="error" role="alert">{error}</p>}
+      {loading && <Loading message="Cargando productos..." />}
+
+      {!loading && renderMain()}
+
+      <MobileNav
+        view={view}
+        onNavigate={navigateTo}
+        isAuthenticated={isAuthenticated}
+        cartCount={cart.reduce((a, i) => a + i.quantity, 0)}
+        onLogin={() => setView('login')}
+        onLogout={handleLogout}
+      />
     </div>
   )
 }

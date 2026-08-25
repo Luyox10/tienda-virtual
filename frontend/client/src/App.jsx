@@ -124,29 +124,34 @@ function App() {
   if (auth) {
     return (
       <div className="container">
-        <header className="header">
-          <h1>Tienda Virtual - Cliente</h1>
-          <div>
-            <span>{auth.user.email} ({auth.user.role})</span>
-            <button
-              className={view === 'catalog' ? 'btn active' : 'btn'}
-              onClick={() => { setView('catalog'); setLastOrder(null) }}
-            >
-              Catálogo
-            </button>
-            <button
-              className={view === 'cart' ? 'btn active' : 'btn'}
-              onClick={() => { setView('cart'); setLastOrder(null) }}
-            >
-              Carrito ({cart.reduce((a, i) => a + i.quantity, 0)})
-            </button>
-            <button
-              className={view === 'orders' ? 'btn active' : 'btn'}
-              onClick={() => { setView('orders'); setLastOrder(null) }}
-            >
-              Pedidos
-            </button>
-            <button onClick={logout} className="btn">Cerrar sesión</button>
+        <header className="app-header">
+          <div className="inner">
+            <div className="brand">
+              <span className="brand-dot" />
+              DeliTurnos
+            </div>
+            <nav className="nav">
+              <span className="user-pill">{auth.user.email}</span>
+              <button
+                className={view === 'catalog' ? 'btn active' : 'btn'}
+                onClick={() => { setView('catalog'); setLastOrder(null) }}
+              >
+                Catálogo
+              </button>
+              <button
+                className={view === 'cart' ? 'btn active' : 'btn'}
+                onClick={() => { setView('cart'); setLastOrder(null) }}
+              >
+                Carrito ({cart.reduce((a, i) => a + i.quantity, 0)})
+              </button>
+              <button
+                className={view === 'orders' ? 'btn active' : 'btn'}
+                onClick={() => { setView('orders'); setLastOrder(null) }}
+              >
+                Pedidos
+              </button>
+              <button onClick={logout} className="btn secondary">Salir</button>
+            </nav>
           </div>
         </header>
 
@@ -188,7 +193,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Tienda Virtual - Cliente</h1>
+      <h1 className="brand"><span className="brand-dot" />DeliTurnos</h1>
       {error && <p className="error">{error}</p>}
 
       {view === 'login' ? (

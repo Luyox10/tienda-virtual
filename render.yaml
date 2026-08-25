@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: tienda-virtual-client
+    runtime: static
+    branch: main
+    rootDir: frontend/client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        value: https://tienda-virtual-backend-9kkr.onrender.com/api
+
+  - type: web
+    name: tienda-virtual-admin
+    runtime: static
+    branch: main
+    rootDir: frontend/admin
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        value: https://tienda-virtual-backend-9kkr.onrender.com/api

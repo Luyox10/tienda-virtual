@@ -1,23 +1,28 @@
 import { useState } from 'react'
 import { createOrder } from './services/api'
+import { productImage } from './productImage'
 
 export default function Cart({ cart, products, token, onUpdate, onClear, onBack, onOrder }) {
   const [error, setError] = useState(null)
 
-  const findProduct = (id) => products.find((p) => p.id === Number(id)) || {}
+  const findProduct = (id) => products.find((p) => p.id === Number(id))
 
   const subtotal = (item) => {
     const p = findProduct(item.product_id)
-    return Number((p.price * item.quantity).toFixed(2))
+    const price = p?.price ?? item.price
+    return Number((price * item.quantity).toFixed(2))
   }
 
   const total = cart.reduce((sum, item) => sum + subtotal(item), 0)
 
-  const updateQty = (id, quantity) => {
-    const q = Number(quantity)
-    if (q <= 0) onUpdate(id, 0)
-    else onUpdate(id, q)
+  const changeQty = (id, delta) => {
+    const item = cart.find((i) => i.product_id === id)
+    if (!item) return
+    const q = Math.max(1, item.quantity + delta)
+    onUpdate(id, q)
   }
+
+  const removeItem = (id) => onUpdate(id, 0)
 
   const checkout = async () => {
     if (cart.length === 0) return
@@ -37,59 +42,70 @@ export default function Cart({ cart, products, token, onUpdate, onClear, onBack,
 
   return (
     <div>
-      <h2>Carrito</h2>
-      <button className="btn secondary" onClick={onBack}>
-        Volver al catálogo
-      </button>
+      <h2 className="page-title">
+        <span>Mi carrito</span>
+        <button className="btn secondary small" onClick={onBack}>
+          Volver
+        </button>
+      </h2>
+
       {error && <p className="error">{error}</p>}
+
       {cart.length === 0 ? (
-        <p>El carrito está vacío.</p>
+        <p className="empty">El carrito está vacío.</p>
       ) : (
         <>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Subtotal</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item) => {
-                const p = findProduct(item.product_id)
-                return (
-                  <tr key={item.product_id}>
-                    <td>{p.name}</td>
-                    <td>S/ {p.price}</td>
-                    <td>
-                      <input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) => updateQty(item.product_id, e.target.value)}
-                        className="qty-input"
-                      />
-                    </td>
-                    <td>S/ {subtotal(item).toFixed(2)}</td>
-                    <td>
-                      <button
-                        className="btn small secondary"
-                        onClick={() => onUpdate(item.product_id, 0)}
-                      >
-                        Quitar
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-          <h3>Total: S/ {total.toFixed(2)}</h3>
-          <button className="btn" onClick={checkout}>
-            Crear pedido
-          </button>
+          <ul className="cart-list">
+            {cart.map((item) => {
+              const p = findProduct(item.product_id)
+              const img = p ? productImage(p) : ''
+              return (
+                <li key={item.product_id} className="cart-item">
+                  {img ? (
+                    <img src={img} alt={item.name} className="cart-thumb" />
+                  ) : (
+                    <div className="cart-thumb placeholder" />
+                  )}
+                  <div className="cart-info">
+                    <p className="cart-name">{item.name}</p>
+                    <p className="cart-price">S/ {item.price} c/u</p>
+                  </div>
+                  <div className="cart-qty">
+                    <button
+                      className="btn small secondary"
+                      onClick={() => changeQty(item.product_id, -1)}
+                    >
+                      −
+                    </button>
+                    <span className="cart-qty-value">{item.quantity}</span>
+                    <button
+                      className="btn small secondary"
+                      onClick={() => changeQty(item.product_id, 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <p className="cart-subtotal">S/ {subtotal(item).toFixed(2)}</p>
+                  <button
+                    className="btn small secondary"
+                    onClick={() => removeItem(item.product_id)}
+                  >
+                    Quitar
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+
+          <div className="cart-footer">
+            <div className="cart-total">
+              <span>TOTAL</span>
+              <span className="cart-total-amount">S/ {total.toFixed(2)}</span>
+            </div>
+            <button className="btn" onClick={checkout}>
+              Crear pedido
+            </button>
+          </div>
         </>
       )}
     </div>

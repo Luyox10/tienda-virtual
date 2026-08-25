@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
-import { register, login } from './services/api'
+import { useAuth } from './context/AuthContext'
 import { getProducts } from './services/productsService'
 import { getShifts, getCurrentShift } from './services/shiftsService'
+import Login from './Login'
+import Register from './Register'
 import Home from './Home'
 import Cart from './Cart'
 import Orders from './Orders'
 import './styles.css'
 
 function App() {
+  const { isAuthenticated, user, token, logout } = useAuth()
   const [view, setView] = useState('login')
-  const [auth, setAuth] = useState(null)
   const [products, setProducts] = useState([])
   const [shifts, setShifts] = useState([])
   const [current, setCurrent] = useState(null)
@@ -21,16 +23,16 @@ function App() {
   })
 
   useEffect(() => {
-    const saved = localStorage.getItem('customer')
-    if (saved) setAuth(JSON.parse(saved))
-  }, [])
-
-  useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart))
   }, [cart])
 
   useEffect(() => {
-    if (!auth) return
+    if (!isAuthenticated) {
+      setProducts([])
+      setShifts([])
+      setCurrent(null)
+      return
+    }
     Promise.all([getProducts(), getShifts(), getCurrentShift()])
       .then(([p, s, c]) => {
         setProducts(p)
@@ -38,51 +40,12 @@ function App() {
         setCurrent(c)
       })
       .catch((e) => setError(e.message))
-  }, [auth])
+  }, [isAuthenticated])
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    const form = new FormData(e.target)
-    try {
-      const data = await login({
-        email: form.get('email'),
-        password: form.get('password'),
-      })
-      localStorage.setItem('customer', JSON.stringify(data))
-      setAuth(data)
-      setView('home')
-      setError(null)
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
-  const handleRegister = async (e) => {
-    e.preventDefault()
-    const form = new FormData(e.target)
-    try {
-      const data = await register({
-        full_name: form.get('full_name'),
-        email: form.get('email'),
-        phone: form.get('phone'),
-        password: form.get('password'),
-      })
-      localStorage.setItem('customer', JSON.stringify(data))
-      setAuth(data)
-      setView('home')
-      setError(null)
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
-  const logout = () => {
-    localStorage.removeItem('customer')
-    setAuth(null)
-    setProducts([])
-    setShifts([])
-    setCurrent(null)
-    setCart([])
+  const handleLogin = () => setView('home')
+  const handleRegister = () => setView('home')
+  const handleLogout = () => {
+    logout()
     setView('login')
     setLastOrder(null)
   }
@@ -123,7 +86,7 @@ function App() {
 
   const clearCart = () => setCart([])
 
-  if (auth) {
+  if (isAuthenticated) {
     return (
       <div className="container">
         <header className="app-header">
@@ -133,7 +96,7 @@ function App() {
               DeliTurnos
             </div>
             <nav className="nav">
-              <span className="user-pill">{auth.user.email}</span>
+              <span className="user-pill">{user.email}</span>
               <button
                 className={view === 'home' ? 'btn active' : 'btn'}
                 onClick={() => { setView('home'); setLastOrder(null) }}
@@ -152,7 +115,7 @@ function App() {
               >
                 Pedidos
               </button>
-              <button onClick={logout} className="btn secondary">Salir</button>
+              <button onClick={handleLogout} className="btn secondary">Salir</button>
             </nav>
           </div>
         </header>
@@ -179,7 +142,7 @@ function App() {
           <Cart
             cart={cart}
             products={products}
-            token={auth.token}
+            token={token}
             onUpdate={updateCart}
             onClear={clearCart}
             onBack={() => setView('home')}
@@ -192,7 +155,7 @@ function App() {
 
         {view === 'orders' && (
           <Orders
-            token={auth.token}
+            token={token}
             onBack={() => setView('home')}
           />
         )}
@@ -201,38 +164,24 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <h1 className="brand"><span className="brand-dot" />DeliTurnos</h1>
-      {error && <p className="error">{error}</p>}
+    <div className="container auth-container">
+      <div className="brand auth-brand">
+        <span className="brand-dot" />
+        DeliTurnos
+      </div>
 
-      {view === 'login' ? (
-        <form onSubmit={handleLogin} className="form">
-          <h2>Iniciar sesión</h2>
-          <input name="email" type="email" placeholder="Correo" required />
-          <input name="password" type="password" placeholder="Contraseña" required />
-          <button type="submit" className="btn">Ingresar</button>
-          <p>
-            ¿No tienes cuenta?{' '}
-            <button type="button" className="link" onClick={() => setView('register')}>
-              Regístrate
-            </button>
-          </p>
-        </form>
+      {view === 'orders' ? (
+        <div className="card auth-message">
+          <h2>Mis pedidos</h2>
+          <p>Regístrate o inicia sesión para consultar tus pedidos.</p>
+          <button className="btn" onClick={() => setView('login')}>
+            Iniciar sesión
+          </button>
+        </div>
+      ) : view === 'login' ? (
+        <Login onToggle={() => setView('register')} onSuccess={handleLogin} />
       ) : (
-        <form onSubmit={handleRegister} className="form">
-          <h2>Crear cuenta</h2>
-          <input name="full_name" placeholder="Nombre completo" required />
-          <input name="email" type="email" placeholder="Correo" required />
-          <input name="phone" placeholder="Teléfono" />
-          <input name="password" type="password" placeholder="Contraseña" required />
-          <button type="submit" className="btn">Registrarse</button>
-          <p>
-            ¿Ya tienes cuenta?{' '}
-            <button type="button" className="link" onClick={() => setView('login')}>
-              Inicia sesión
-            </button>
-          </p>
-        </form>
+        <Register onToggle={() => setView('login')} onSuccess={handleRegister} />
       )}
     </div>
   )

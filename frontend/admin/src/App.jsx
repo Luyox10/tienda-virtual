@@ -1,121 +1,71 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import { getProducts, getShifts, getUsers, getDashboard } from './api'
+import './styles.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [products, setProducts] = useState([])
+  const [shifts, setShifts] = useState([])
+  const [users, setUsers] = useState(null)
+  const [dashboard, setDashboard] = useState(null)
+
+  useEffect(() => {
+    Promise.allSettled([getProducts(), getShifts(), getUsers(), getDashboard()])
+      .then(([p, s, u, d]) => {
+        if (p.status === 'fulfilled') setProducts(p.value)
+        if (s.status === 'fulfilled') setShifts(s.value)
+        if (u.status === 'fulfilled') setUsers(u.value)
+        if (d.status === 'fulfilled') setDashboard(d.value)
+      })
+  }, [])
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="container">
+      <h1>Tienda Virtual - Administrador</h1>
 
-      <div className="ticks"></div>
+      <h2>Dashboard</h2>
+      {dashboard ? (
+        <ul>
+          <li>Ventas hoy: S/ {dashboard.sales_today}</li>
+          <li>Ventas mes: S/ {dashboard.sales_month}</li>
+          <li>Aceptados: {dashboard.accepted_orders}</li>
+          <li>Rechazados: {dashboard.rejected_orders}</li>
+          <li>Pendientes: {dashboard.pending_payment_orders}</li>
+        </ul>
+      ) : (
+        <p className="error">Dashboard requiere autenticación</p>
+      )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      <h2>Usuarios</h2>
+      {users ? (
+        <ul>
+          {users.map((u) => (
+            <li key={u.id}>{u.email} ({u.role})</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="error">Usuarios requieren autenticación</p>
+      )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <h2>Turnos</h2>
+      <ul>
+        {shifts.map((s) => (
+          <li key={s.id}>
+            {s.name}: {s.start_time} - {s.end_time}
+          </li>
+        ))}
+      </ul>
+
+      <h2>Productos</h2>
+      <div className="grid">
+        {products.map((p) => (
+          <div className="card" key={p.id}>
+            <h3>{p.name}</h3>
+            <p>Precio: S/ {p.price}</p>
+            <p>Turno: {p.shift_name}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

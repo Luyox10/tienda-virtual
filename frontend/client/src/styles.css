@@ -120,3 +120,40 @@ li { margin: 0.4rem 0; }
   padding: 0.5rem;
   text-align: left;
 }
+
+.qty-input {
+  width: 60px;
+  padding: 0.4rem;
+  margin-right: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.detail {
+  margin: 1rem 0;
+  background: #fff;
+}
+
+.btn.active {
+  background: #1e40af;
+}
+
+.btn.small {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  margin-right: 0.3rem;
+}
+
+.btn.secondary {
+  background: #6b7280;
+}
+
+.btn.secondary:hover { background: #4b5563; }

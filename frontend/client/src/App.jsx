@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import { register, login, getProducts, getShifts, getCurrentShift } from './api'
+import ProductList from './ProductList'
+import Cart from './Cart'
+import Orders from './Orders'
 import './styles.css'
 
 function App() {
@@ -9,11 +12,20 @@ function App() {
   const [shifts, setShifts] = useState([])
   const [current, setCurrent] = useState(null)
   const [error, setError] = useState(null)
+  const [lastOrder, setLastOrder] = useState(null)
+  const [cart, setCart] = useState(() => {
+    const saved = localStorage.getItem('cart')
+    return saved ? JSON.parse(saved) : []
+  })
 
   useEffect(() => {
     const saved = localStorage.getItem('customer')
     if (saved) setAuth(JSON.parse(saved))
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart))
+  }, [cart])
 
   useEffect(() => {
     if (!auth) return
@@ -36,6 +48,7 @@ function App() {
       })
       localStorage.setItem('customer', JSON.stringify(data))
       setAuth(data)
+      setView('catalog')
       setError(null)
     } catch (err) {
       setError(err.message)
@@ -54,6 +67,7 @@ function App() {
       })
       localStorage.setItem('customer', JSON.stringify(data))
       setAuth(data)
+      setView('catalog')
       setError(null)
     } catch (err) {
       setError(err.message)
@@ -66,7 +80,46 @@ function App() {
     setProducts([])
     setShifts([])
     setCurrent(null)
+    setCart([])
+    setView('login')
+    setLastOrder(null)
   }
+
+  const addToCart = (product, quantity) => {
+    setCart((prev) => {
+      const existing = prev.find((i) => i.product_id === product.id)
+      if (existing) {
+        return prev.map((i) =>
+          i.product_id === product.id
+            ? { ...i, quantity: i.quantity + quantity }
+            : i
+        )
+      }
+      return [
+        ...prev,
+        {
+          product_id: product.id,
+          quantity,
+          name: product.name,
+          price: product.price,
+        },
+      ]
+    })
+  }
+
+  const updateCart = (productId, quantity) => {
+    if (quantity <= 0) {
+      setCart((prev) => prev.filter((i) => i.product_id !== productId))
+    } else {
+      setCart((prev) =>
+        prev.map((i) =>
+          i.product_id === productId ? { ...i, quantity } : i
+        )
+      )
+    }
+  }
+
+  const clearCart = () => setCart([])
 
   if (auth) {
     return (
@@ -75,45 +128,60 @@ function App() {
           <h1>Tienda Virtual - Cliente</h1>
           <div>
             <span>{auth.user.email} ({auth.user.role})</span>
+            <button
+              className={view === 'catalog' ? 'btn active' : 'btn'}
+              onClick={() => { setView('catalog'); setLastOrder(null) }}
+            >
+              Catálogo
+            </button>
+            <button
+              className={view === 'cart' ? 'btn active' : 'btn'}
+              onClick={() => { setView('cart'); setLastOrder(null) }}
+            >
+              Carrito ({cart.reduce((a, i) => a + i.quantity, 0)})
+            </button>
+            <button
+              className={view === 'orders' ? 'btn active' : 'btn'}
+              onClick={() => { setView('orders'); setLastOrder(null) }}
+            >
+              Pedidos
+            </button>
             <button onClick={logout} className="btn">Cerrar sesión</button>
           </div>
         </header>
-        {error && <p className="error">{error}</p>}
 
-        <h2>Turno actual</h2>
-        {current?.current ? (
-          <p>
-            {current.current.name} - {current.current.is_open ? 'Abierto' : 'Cerrado'}
-          </p>
-        ) : (
-          <p>Cargando...</p>
+        {error && <p className="error">{error}</p>}
+        {lastOrder && (
+          <div className="message">
+            <p>Pedido #{lastOrder.id} creado. Total: S/ {lastOrder.total}</p>
+          </div>
         )}
 
-        <h2>Turnos</h2>
-        <ul>
-          {shifts.map((s) => (
-            <li key={s.id}>
-              {s.name}: {s.start_time} - {s.end_time}
-            </li>
-          ))}
-        </ul>
+        {view === 'catalog' && (
+          <ProductList products={products} current={current} onAdd={addToCart} />
+        )}
 
-        <h2>Productos</h2>
-        <div className="grid">
-          {products.map((p) => (
-            <div className={`card ${p.is_active ? '' : 'sold-out'}`} key={p.id}>
-              {p.image_url ? (
-                <img src={p.image_url} alt={p.name} className="product-img" />
-              ) : (
-                <div className="product-img placeholder">Sin imagen</div>
-              )}
-              <h3>{p.name}</h3>
-              <p>Precio: S/ {p.price}</p>
-              <p>Turno: {p.shift_name}</p>
-              <p>{p.is_active ? 'Disponible' : 'Agotado / Inactivo'}</p>
-            </div>
-          ))}
-        </div>
+        {view === 'cart' && (
+          <Cart
+            cart={cart}
+            products={products}
+            token={auth.token}
+            onUpdate={updateCart}
+            onClear={clearCart}
+            onBack={() => setView('catalog')}
+            onOrder={(o) => {
+              setLastOrder(o)
+              setView('orders')
+            }}
+          />
+        )}
+
+        {view === 'orders' && (
+          <Orders
+            token={auth.token}
+            onBack={() => setView('catalog')}
+          />
+        )}
       </div>
     )
   }

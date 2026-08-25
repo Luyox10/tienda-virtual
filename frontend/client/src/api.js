@@ -48,3 +48,5 @@ export const getCurrentShift = () => getJson('/shifts/current');
 export const createOrder = (items, token) => authPostJson('/orders', { items }, token);
 export const getOrders = (token) => authGetJson('/orders', token);
 export const getOrder = (id, token) => authGetJson(`/orders/${id}`, token);
+export const createPayment = (body, token) => authPostJson('/payments', body, token);
+export const getPayment = (id, token) => authGetJson(`/payments/${id}`, token);

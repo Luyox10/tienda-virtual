@@ -63,3 +63,9 @@ export const updateProduct = (id, body, token) => authPatchJson(`/admin/products
 export const setProductAvailability = (id, body, token) =>
   authPatchJson(`/admin/products/${id}/availability`, body, token);
 export const updateShift = (id, body, token) => authPatchJson(`/admin/shifts/${id}`, body, token);
+export const getOrders = (token) => authGetJson('/orders', token);
+export const getOrder = (id, token) => authGetJson(`/orders/${id}`, token);
+export const getPayments = (token) => authGetJson('/admin/payments', token);
+export const approvePayment = (id, token) => authPatchJson(`/admin/payments/${id}/approve`, {}, token);
+export const rejectPayment = (id, token, reason) =>
+  authPatchJson(`/admin/payments/${id}/reject`, { rejection_reason: reason }, token);

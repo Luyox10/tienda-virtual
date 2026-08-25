@@ -123,3 +123,20 @@ select {
   border-radius: 6px;
   font-size: 1rem;
 }
+
+.small-input {
+  padding: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 120px;
+  margin: 0 0.3rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}

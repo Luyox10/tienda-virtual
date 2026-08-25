@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import AdminOrders from './AdminOrders'
+import AdminPayments from './AdminPayments'
 import {
   getProducts,
   getShifts,
@@ -297,6 +299,9 @@ export default function AdminPanel({ auth, onLogout }) {
         </select>
         <button type="submit" className="btn">Actualizar disponibilidad</button>
       </form>
+
+      <AdminOrders token={auth.token} />
+      <AdminPayments token={auth.token} />
 
       <h2>Productos</h2>
       <table className="table">

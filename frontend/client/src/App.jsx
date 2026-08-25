@@ -101,10 +101,16 @@ function App() {
         <h2>Productos</h2>
         <div className="grid">
           {products.map((p) => (
-            <div className="card" key={p.id}>
+            <div className={`card ${p.is_active ? '' : 'sold-out'}`} key={p.id}>
+              {p.image_url ? (
+                <img src={p.image_url} alt={p.name} className="product-img" />
+              ) : (
+                <div className="product-img placeholder">Sin imagen</div>
+              )}
               <h3>{p.name}</h3>
               <p>Precio: S/ {p.price}</p>
               <p>Turno: {p.shift_name}</p>
+              <p>{p.is_active ? 'Disponible' : 'Agotado / Inactivo'}</p>
             </div>
           ))}
         </div>

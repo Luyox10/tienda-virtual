@@ -19,4 +19,27 @@ const current = async () => {
   return shift;
 };
 
-module.exports = { list, current };
+const update = async (id, { is_enabled, manual_override }) => {
+  const fields = [];
+  const values = [];
+
+  if (is_enabled !== undefined) {
+    fields.push('is_enabled = ?');
+    values.push(is_enabled ? 1 : 0);
+  }
+
+  if (manual_override !== undefined) {
+    fields.push('manual_override = ?');
+    values.push(manual_override === null ? null : (manual_override ? 1 : 0));
+  }
+
+  if (fields.length === 0) throw new Error('Nada para actualizar');
+
+  values.push(id);
+  await db.execute(`UPDATE shifts SET ${fields.join(', ')} WHERE id = ?`, values);
+
+  const [rows] = await db.execute('SELECT * FROM shifts WHERE id = ?', [id]);
+  return rows[0];
+};
+
+module.exports = { list, current, update };

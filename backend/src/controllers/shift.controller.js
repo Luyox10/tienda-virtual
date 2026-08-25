@@ -18,4 +18,13 @@ const current = async (req, res) => {
   }
 };
 
-module.exports = { list, current };
+const update = async (req, res) => {
+  try {
+    const shift = await shiftService.update(req.params.id, req.body);
+    res.json(shift);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+module.exports = { list, current, update };

@@ -1,6 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003/api';
 
-async function postJson(path, body) {
+export async function postJson(path, body) {
   const res = await fetch(API_URL + path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -11,7 +11,7 @@ async function postJson(path, body) {
   return data;
 }
 
-async function authGetJson(path, token) {
+export async function authGetJson(path, token) {
   const res = await fetch(API_URL + path, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -20,7 +20,7 @@ async function authGetJson(path, token) {
   return data;
 }
 
-async function authPostJson(path, body, token) {
+export async function authPostJson(path, body, token) {
   const res = await fetch(API_URL + path, {
     method: 'POST',
     headers: {
@@ -34,7 +34,7 @@ async function authPostJson(path, body, token) {
   return data;
 }
 
-async function getJson(path) {
+export async function getJson(path) {
   const res = await fetch(API_URL + path);
   if (!res.ok) throw new Error(`HTTP ${res.status} en ${path}`);
   return res.json();

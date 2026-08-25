@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getOrders, getOrder, createPayment, getPayment } from './api'
+import { getOrders, getOrder, createPayment, getPayment } from './services/api'
 
 export default function Orders({ token, onBack }) {
   const [orders, setOrders] = useState([])

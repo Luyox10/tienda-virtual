@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { register, login, getProducts, getShifts, getCurrentShift } from './api'
-import ProductList from './ProductList'
+import { register, login } from './services/api'
+import { getProducts } from './services/productsService'
+import { getShifts, getCurrentShift } from './services/shiftsService'
+import Home from './Home'
 import Cart from './Cart'
 import Orders from './Orders'
 import './styles.css'
@@ -48,7 +50,7 @@ function App() {
       })
       localStorage.setItem('customer', JSON.stringify(data))
       setAuth(data)
-      setView('catalog')
+      setView('home')
       setError(null)
     } catch (err) {
       setError(err.message)
@@ -67,7 +69,7 @@ function App() {
       })
       localStorage.setItem('customer', JSON.stringify(data))
       setAuth(data)
-      setView('catalog')
+      setView('home')
       setError(null)
     } catch (err) {
       setError(err.message)
@@ -133,10 +135,10 @@ function App() {
             <nav className="nav">
               <span className="user-pill">{auth.user.email}</span>
               <button
-                className={view === 'catalog' ? 'btn active' : 'btn'}
-                onClick={() => { setView('catalog'); setLastOrder(null) }}
+                className={view === 'home' ? 'btn active' : 'btn'}
+                onClick={() => { setView('home'); setLastOrder(null) }}
               >
-                Catálogo
+                Inicio
               </button>
               <button
                 className={view === 'cart' ? 'btn active' : 'btn'}
@@ -162,8 +164,15 @@ function App() {
           </div>
         )}
 
-        {view === 'catalog' && (
-          <ProductList products={products} current={current} onAdd={addToCart} />
+        {view === 'home' && (
+          <Home
+            products={products}
+            shifts={shifts}
+            current={current}
+            cart={cart}
+            onAdd={addToCart}
+            setView={setView}
+          />
         )}
 
         {view === 'cart' && (
@@ -173,7 +182,7 @@ function App() {
             token={auth.token}
             onUpdate={updateCart}
             onClear={clearCart}
-            onBack={() => setView('catalog')}
+            onBack={() => setView('home')}
             onOrder={(o) => {
               setLastOrder(o)
               setView('orders')
@@ -184,7 +193,7 @@ function App() {
         {view === 'orders' && (
           <Orders
             token={auth.token}
-            onBack={() => setView('catalog')}
+            onBack={() => setView('home')}
           />
         )}
       </div>

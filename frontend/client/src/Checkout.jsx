@@ -3,7 +3,6 @@ import { createPayment } from './services/api'
 import { YAPE_NUMBER } from './config'
 
 export default function Checkout({ order, token, onDone, onBack }) {
-  const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [error, setError] = useState(null)
   const [message, setMessage] = useState(null)

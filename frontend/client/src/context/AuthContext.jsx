@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { register as apiRegister, login as apiLogin } from '../services/api'
 
 const AuthContext = createContext(null)
@@ -10,18 +10,17 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [auth, setAuth] = useState(null)
-
-  useEffect(() => {
+  const [auth, setAuth] = useState(() => {
     const saved = localStorage.getItem('customer')
     if (saved) {
       try {
-        setAuth(JSON.parse(saved))
+        return JSON.parse(saved)
       } catch {
         localStorage.removeItem('customer')
       }
     }
-  }, [])
+    return null
+  })
 
   const saveAuth = (data) => {
     localStorage.setItem('customer', JSON.stringify(data))

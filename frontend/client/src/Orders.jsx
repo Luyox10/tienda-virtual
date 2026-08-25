@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { getOrders, getOrder } from './services/api'
 import OrderTracker from './OrderTracker'
 
@@ -7,15 +7,15 @@ export default function Orders({ token, onBack, onPay }) {
   const [selected, setSelected] = useState(null)
   const [error, setError] = useState(null)
 
-  const loadOrders = () => {
+  const loadOrders = useCallback(() => {
     getOrders(token)
       .then(setOrders)
       .catch((e) => setError(e.message))
-  }
+  }, [token])
 
   useEffect(() => {
     loadOrders()
-  }, [token])
+  }, [loadOrders])
 
   const viewDetail = (id) => {
     getOrder(id, token)
@@ -38,7 +38,7 @@ export default function Orders({ token, onBack, onPay }) {
 
       {selected ? (
         <div>
-          <OrderTracker order={selected} token={token} />
+          <OrderTracker key={selected.id} order={selected} token={token} />
           <button className="btn secondary" onClick={goBack}>
             Volver al historial
           </button>

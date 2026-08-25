@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useAuth } from './context/AuthContext'
 import { getProducts } from './services/productsService'
 import { getShifts, getCurrentShift } from './services/shiftsService'
+import Loading from './Loading'
 import Login from './Login'
 import Register from './Register'
 import Home from './Home'
 import Cart from './Cart'
 import Orders from './Orders'
 import Checkout from './Checkout'
+import MobileNav from './MobileNav'
 import './styles.css'
 
 function App() {
@@ -18,6 +20,7 @@ function App() {
   const [current, setCurrent] = useState(null)
   const [error, setError] = useState(null)
   const [currentOrder, setCurrentOrder] = useState(null)
+  const [loading, setLoading] = useState(false)
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('cart')
     return saved ? JSON.parse(saved) : []
@@ -28,12 +31,9 @@ function App() {
   }, [cart])
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setProducts([])
-      setShifts([])
-      setCurrent(null)
-      return
-    }
+    if (!isAuthenticated) return
+    setLoading(true)
+    setError(null)
     Promise.all([getProducts(), getShifts(), getCurrentShift()])
       .then(([p, s, c]) => {
         setProducts(p)
@@ -41,6 +41,7 @@ function App() {
         setCurrent(c)
       })
       .catch((e) => setError(e.message))
+      .finally(() => setLoading(false))
   }, [isAuthenticated])
 
   const handleLogin = () => setView('home')
@@ -48,6 +49,13 @@ function App() {
   const handleLogout = () => {
     logout()
     setView('login')
+    setProducts([])
+    setShifts([])
+    setCurrent(null)
+    setCurrentOrder(null)
+  }
+  const navigateTo = (v) => {
+    setView(v)
     setCurrentOrder(null)
   }
 
@@ -89,41 +97,45 @@ function App() {
 
   if (isAuthenticated) {
     return (
-      <div className="container">
+      <div className="container app-container">
         <header className="app-header">
           <div className="inner">
             <div className="brand">
               <span className="brand-dot" />
               DeliTurnos
             </div>
-            <nav className="nav">
+            <nav className="nav" aria-label="Navegación superior">
               <span className="user-pill">{user.email}</span>
               <button
                 className={view === 'home' ? 'btn active' : 'btn'}
-                onClick={() => { setView('home'); setCurrentOrder(null) }}
+                onClick={() => navigateTo('home')}
+                aria-label="Inicio"
               >
                 Inicio
               </button>
               <button
                 className={view === 'cart' ? 'btn active' : 'btn'}
-                onClick={() => { setView('cart'); setCurrentOrder(null) }}
+                onClick={() => navigateTo('cart')}
+                aria-label="Carrito"
               >
                 Carrito ({cart.reduce((a, i) => a + i.quantity, 0)})
               </button>
               <button
                 className={view === 'orders' ? 'btn active' : 'btn'}
-                onClick={() => { setView('orders'); setCurrentOrder(null) }}
+                onClick={() => navigateTo('orders')}
+                aria-label="Pedidos"
               >
                 Pedidos
               </button>
-              <button onClick={handleLogout} className="btn secondary">Salir</button>
+              <button onClick={handleLogout} className="btn secondary" aria-label="Cerrar sesión">Salir</button>
             </nav>
           </div>
         </header>
 
-        {error && <p className="error">{error}</p>}
+        {error && <p className="error" role="alert">{error}</p>}
+        {loading && <Loading message="Cargando productos..." />}
 
-        {view === 'home' && (
+        {!loading && view === 'home' && (
           <Home
             products={products}
             shifts={shifts}
@@ -171,6 +183,13 @@ function App() {
             onBack={() => setView('orders')}
           />
         )}
+
+        <MobileNav
+          view={view}
+          onNavigate={navigateTo}
+          cartCount={cart.reduce((a, i) => a + i.quantity, 0)}
+          onLogout={handleLogout}
+        />
       </div>
     )
   }

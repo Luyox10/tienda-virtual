@@ -1,5 +1,14 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003/api';
 
+function friendlyError(status, original = '') {
+  if (status === 401) return 'Sesión expirada. Vuelve a iniciar sesión.'
+  if (status === 403) return 'No tienes permiso para realizar esta acción.'
+  if (status === 404) return 'No encontramos lo que buscas.'
+  if (status === 422) return original || 'Revisa los datos ingresados.'
+  if (status >= 500) return 'No pudimos procesar tu solicitud. Intenta nuevamente.'
+  return original || `Error ${status}`
+}
+
 export async function postJson(path, body) {
   const res = await fetch(API_URL + path, {
     method: 'POST',
@@ -7,7 +16,7 @@ export async function postJson(path, body) {
     body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(friendlyError(res.status, data.error));
   return data;
 }
 
@@ -16,7 +25,7 @@ export async function authGetJson(path, token) {
     headers: { Authorization: `Bearer ${token}` },
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(friendlyError(res.status, data.error));
   return data;
 }
 
@@ -30,13 +39,13 @@ export async function authPostJson(path, body, token) {
     body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(friendlyError(res.status, data.error));
   return data;
 }
 
 export async function getJson(path) {
   const res = await fetch(API_URL + path);
-  if (!res.ok) throw new Error(`HTTP ${res.status} en ${path}`);
+  if (!res.ok) throw new Error(friendlyError(res.status, `No se pudo cargar ${path}`));
   return res.json();
 }
 

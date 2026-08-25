@@ -22,7 +22,6 @@ export default function OrderTracker({ order, token }) {
   const [live, setLive] = useState(order)
 
   useEffect(() => {
-    setLive(order)
     const id = order.id
     const interval = setInterval(() => {
       getOrder(id, token)

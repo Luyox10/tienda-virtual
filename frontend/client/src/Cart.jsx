@@ -103,7 +103,7 @@ export default function Cart({ cart, products, token, onUpdate, onClear, onBack,
               <span className="cart-total-amount">S/ {total.toFixed(2)}</span>
             </div>
             <button className="btn" onClick={checkout}>
-              Crear pedido
+              IR A PAGAR
             </button>
           </div>
         </>

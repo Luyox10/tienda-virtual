@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
-import { getOrders, getOrder, createPayment, getPayment } from './services/api'
+import { getOrders, getOrder } from './services/api'
+import OrderTracker from './OrderTracker'
 
-export default function Orders({ token, onBack }) {
+export default function Orders({ token, onBack, onPay }) {
   const [orders, setOrders] = useState([])
   const [selected, setSelected] = useState(null)
-  const [paying, setPaying] = useState(null)
-  const [payment, setPayment] = useState(null)
   const [error, setError] = useState(null)
-  const [message, setMessage] = useState(null)
 
   const loadOrders = () => {
     getOrders(token)
@@ -21,112 +19,51 @@ export default function Orders({ token, onBack }) {
 
   const viewDetail = (id) => {
     getOrder(id, token)
-      .then((o) => {
-        setSelected(o)
-        if (o.payment_id) {
-          getPayment(o.payment_id, token)
-            .then(setPayment)
-            .catch(() => setPayment(null))
-        }
-      })
+      .then(setSelected)
       .catch((e) => setError(e.message))
   }
 
-  const submitPayment = async (e) => {
-    e.preventDefault()
-    const form = new FormData(e.target)
-    try {
-      const p = await createPayment(
-        {
-          order_id: paying.id,
-          amount: paying.total,
-          proof_image_url: form.get('proof_image_url'),
-          method: 'YAPE',
-        },
-        token
-      )
-      setMessage(`Pago #${p.id} registrado. Espera aprobación.`)
-      setPaying(null)
-      loadOrders()
-      setError(null)
-    } catch (err) {
-      setError(err.message)
-    }
-  }
+  const goBack = () => setSelected(null)
 
   return (
     <div>
-      <h2>Mis pedidos</h2>
-      <button className="btn secondary" onClick={onBack}>
-        Volver al catálogo
-      </button>
-      {error && <p className="error">{error}</p>}
-      {message && <p className="message">{message}</p>}
+      <h2 className="page-title">
+        <span>Mis pedidos</span>
+        <button className="btn secondary small" onClick={onBack}>
+          Volver
+        </button>
+      </h2>
 
-      {paying ? (
-        <div className="card detail">
-          <h3>Pagar pedido #{paying.id}</h3>
-          <p>Total: S/ {paying.total}</p>
-          <p>Realiza el pago por Yape y pega la URL del comprobante.</p>
-          <form onSubmit={submitPayment} className="form">
-            <input type="text" name="proof_image_url" placeholder="URL del comprobante" required />
-            <button type="submit" className="btn">Registrar pago</button>
-            <button
-              type="button"
-              className="btn secondary"
-              onClick={() => setPaying(null)}
-            >
-              Cancelar
-            </button>
-          </form>
-        </div>
-      ) : selected ? (
-        <div className="card detail">
-          <h3>Pedido #{selected.id}</h3>
-          <p>Total: S/ {selected.total}</p>
-          <p>Estado del pedido: {selected.status}</p>
-          <p>Estado del pago: {selected.payment_status}</p>
-          {payment && (
-            <>
-              <p>Método: {payment.method}</p>
-              {payment.voucher_url ? (
-                <a href={payment.voucher_url} target="_blank" rel="noreferrer">
-                  Ver comprobante
-                </a>
-              ) : (
-                <p>Sin comprobante</p>
-              )}
-            </>
-          )}
-          <h4>Productos</h4>
-          <ul>
-            {selected.items?.map((i) => (
-              <li key={i.id}>
-                {i.product_name} x {i.quantity} - S/ {i.subtotal}
-              </li>
-            ))}
-          </ul>
-          <button className="btn" onClick={() => setSelected(null)}>
+      {error && <p className="error">{error}</p>}
+
+      {selected ? (
+        <div>
+          <OrderTracker order={selected} token={token} />
+          <button className="btn secondary" onClick={goBack}>
             Volver al historial
           </button>
         </div>
       ) : (
-        <ul>
+        <ul className="order-list">
           {orders.map((o) => (
             <li key={o.id} className="order-item">
-              <span>
-                Pedido #{o.id} - S/ {o.total} - {o.status}
-              </span>
-              <span>
+              <div className="order-info">
+                <span className="order-id">Pedido #{o.id}</span>
+                <span className="order-total">S/ {o.total}</span>
+                <span className={`badge ${o.status === 'ACCEPTED' || o.status === 'COMPLETED' ? 'accepted' : o.status === 'REJECTED' || o.status === 'CANCELLED' ? 'rejected' : 'pending'}`}>
+                  {o.status}
+                </span>
+              </div>
+              <div>
                 {o.status === 'PENDING_PAYMENT' && (
-                  <button className="btn small" onClick={() => setPaying(o)}>
+                  <button className="btn small" onClick={() => onPay(o)}>
                     Pagar
                   </button>
                 )}
                 <button className="btn small" onClick={() => viewDetail(o.id)}>
-                  Ver
+                  Seguimiento
                 </button>
-              </span>
+              </div>
             </li>
           ))}
         </ul>

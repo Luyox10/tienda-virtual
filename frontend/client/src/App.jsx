@@ -7,6 +7,7 @@ import Register from './Register'
 import Home from './Home'
 import Cart from './Cart'
 import Orders from './Orders'
+import Checkout from './Checkout'
 import './styles.css'
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
   const [shifts, setShifts] = useState([])
   const [current, setCurrent] = useState(null)
   const [error, setError] = useState(null)
-  const [lastOrder, setLastOrder] = useState(null)
+  const [currentOrder, setCurrentOrder] = useState(null)
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('cart')
     return saved ? JSON.parse(saved) : []
@@ -47,7 +48,7 @@ function App() {
   const handleLogout = () => {
     logout()
     setView('login')
-    setLastOrder(null)
+    setCurrentOrder(null)
   }
 
   const addToCart = (product, quantity) => {
@@ -99,19 +100,19 @@ function App() {
               <span className="user-pill">{user.email}</span>
               <button
                 className={view === 'home' ? 'btn active' : 'btn'}
-                onClick={() => { setView('home'); setLastOrder(null) }}
+                onClick={() => { setView('home'); setCurrentOrder(null) }}
               >
                 Inicio
               </button>
               <button
                 className={view === 'cart' ? 'btn active' : 'btn'}
-                onClick={() => { setView('cart'); setLastOrder(null) }}
+                onClick={() => { setView('cart'); setCurrentOrder(null) }}
               >
                 Carrito ({cart.reduce((a, i) => a + i.quantity, 0)})
               </button>
               <button
                 className={view === 'orders' ? 'btn active' : 'btn'}
-                onClick={() => { setView('orders'); setLastOrder(null) }}
+                onClick={() => { setView('orders'); setCurrentOrder(null) }}
               >
                 Pedidos
               </button>
@@ -121,11 +122,6 @@ function App() {
         </header>
 
         {error && <p className="error">{error}</p>}
-        {lastOrder && (
-          <div className="message">
-            <p>Pedido #{lastOrder.id} creado. Total: S/ {lastOrder.total}</p>
-          </div>
-        )}
 
         {view === 'home' && (
           <Home
@@ -147,8 +143,8 @@ function App() {
             onClear={clearCart}
             onBack={() => setView('home')}
             onOrder={(o) => {
-              setLastOrder(o)
-              setView('orders')
+              setCurrentOrder(o)
+              setView('checkout')
             }}
           />
         )}
@@ -157,6 +153,22 @@ function App() {
           <Orders
             token={token}
             onBack={() => setView('home')}
+            onPay={(o) => {
+              setCurrentOrder(o)
+              setView('checkout')
+            }}
+          />
+        )}
+
+        {view === 'checkout' && currentOrder && (
+          <Checkout
+            order={currentOrder}
+            token={token}
+            onDone={() => {
+              setView('orders')
+              setCurrentOrder(null)
+            }}
+            onBack={() => setView('orders')}
           />
         )}
       </div>

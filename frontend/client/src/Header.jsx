@@ -1,0 +1,87 @@
+import { useState } from 'react'
+
+export default function Header({ view, onNavigate, isAuthenticated, user, cartCount, onLogout }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const nav = [
+    { key: 'home', label: 'Inicio' },
+    { key: 'products', label: 'Productos' },
+    { key: 'orders', label: 'Mis pedidos' },
+    { key: 'contact', label: 'Contacto' },
+  ]
+
+  return (
+    <header className="app-header" role="banner">
+      <div className="inner header-inner">
+        <a className="brand" href="#" onClick={(e) => { e.preventDefault(); onNavigate('home') }} aria-label="Sabor Delicioso - Inicio">
+          <span className="brand-dot" aria-hidden="true" />
+          <span className="brand-name">Sabor<span className="brand-light">Delicioso</span></span>
+        </a>
+
+        <nav className="main-nav" aria-label="Navegación principal">
+          {nav.map((n) => (
+            <button
+              key={n.key}
+              className={`nav-link ${view === n.key ? 'active' : ''}`}
+              onClick={() => onNavigate(n.key)}
+              aria-current={view === n.key ? 'page' : undefined}
+            >
+              {n.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="header-tools">
+          <button className="tool-btn cart-btn" onClick={() => onNavigate('cart')} aria-label={`Carrito con ${cartCount} productos`}>
+            <span aria-hidden="true">🛒</span>
+            {cartCount > 0 && <span className="tool-badge">{cartCount}</span>}
+          </button>
+          <button className="tool-btn" aria-label="Notificaciones">
+            <span aria-hidden="true">🔔</span>
+          </button>
+
+          {isAuthenticated ? (
+            <div className="user-menu">
+              <span className="user-pill" aria-haspopup="true" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+                <span className="avatar" aria-hidden="true">👤</span>
+                <span className="user-name">{user?.full_name?.split(' ')[0] || user?.email?.split('@')[0]}</span>
+              </span>
+              {menuOpen && (
+                <div className="dropdown">
+                  <button onClick={() => { setMenuOpen(false); onNavigate('profile') }}>Mi perfil</button>
+                  <button onClick={() => { setMenuOpen(false); onLogout() }}>Cerrar sesión</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button className="btn small" onClick={() => onNavigate('login')}>Ingresar</button>
+          )}
+
+          <button className="mobile-menu-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="Abrir menú" aria-expanded={menuOpen}>
+            <span aria-hidden="true">☰</span>
+          </button>
+        </div>
+
+        {menuOpen && (
+          <nav className="mobile-menu" aria-label="Menú móvil">
+            {nav.map((n) => (
+              <button
+                key={n.key}
+                className={`mobile-nav-link ${view === n.key ? 'active' : ''}`}
+                onClick={() => { setMenuOpen(false); onNavigate(n.key) }}
+              >
+                {n.label}
+              </button>
+            ))}
+            <button onClick={() => { setMenuOpen(false); onNavigate('cart') }}>Carrito ({cartCount})</button>
+            {isAuthenticated ? (
+              <button onClick={() => { setMenuOpen(false); onLogout() }}>Cerrar sesión</button>
+            ) : (
+              <button onClick={() => { setMenuOpen(false); onNavigate('login') }}>Ingresar</button>
+            )}
+          </nav>
+        )}
+      </div>
+    </header>
+  )
+}

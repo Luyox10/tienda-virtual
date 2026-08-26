@@ -3,9 +3,12 @@ import { useAuth } from './context/AuthContext'
 import { getProducts } from './services/productsService'
 import { getShifts, getCurrentShift } from './services/shiftsService'
 import Loading from './Loading'
+import Header from './Header'
+import Footer from './Footer'
 import Login from './Login'
 import Register from './Register'
 import Home from './Home'
+import ProductsPage from './ProductsPage'
 import Cart from './Cart'
 import Orders from './Orders'
 import Checkout from './Checkout'
@@ -124,12 +127,23 @@ function App() {
       return (
         <Home
           products={products}
-          shifts={shifts}
           current={current}
-          cart={cart}
           onAdd={addToCart}
           setView={setView}
         />
+      )
+    }
+
+    if (view === 'products') {
+      return <ProductsPage products={products} current={current} onAdd={addToCart} />
+    }
+
+    if (view === 'contact') {
+      return (
+        <main className="page contact-page card">
+          <h1 className="page-title center">Contacto</h1>
+          <p className="empty">Pronto podrás contactarnos directamente desde aquí.</p>
+        </main>
       )
     }
 
@@ -166,7 +180,7 @@ function App() {
         )
       }
       return (
-        <div className="card auth-message">
+        <main className="page card auth-message">
           <h2>Mis pedidos</h2>
           <p>Inicia sesión para ver el registro de tus pedidos.</p>
           <button className="btn" onClick={() => setView('login')}>
@@ -175,7 +189,7 @@ function App() {
           <button className="btn secondary" onClick={() => setView('home')}>
             Volver al inicio
           </button>
-        </div>
+        </main>
       )
     }
 
@@ -197,49 +211,22 @@ function App() {
   }
 
   return (
-    <div className="container app-container">
-      <header className="app-header">
-        <div className="inner">
-          <div className="brand">
-            <span className="brand-dot" />
-            DeliTurnos
-          </div>
-          <nav className="nav" aria-label="Navegación superior">
-            {isAuthenticated && <span className="user-pill">{user.email}</span>}
-            <button
-              className={view === 'home' ? 'btn active' : 'btn'}
-              onClick={() => navigateTo('home')}
-              aria-label="Inicio"
-            >
-              Inicio
-            </button>
-            <button
-              className={view === 'cart' ? 'btn active' : 'btn'}
-              onClick={() => navigateTo('cart')}
-              aria-label="Carrito"
-            >
-              Carrito ({cart.reduce((a, i) => a + i.quantity, 0)})
-            </button>
-            <button
-              className={view === 'orders' ? 'btn active' : 'btn'}
-              onClick={() => requireAuth('orders')}
-              aria-label="Pedidos"
-            >
-              Pedidos
-            </button>
-            {isAuthenticated ? (
-              <button onClick={handleLogout} className="btn secondary" aria-label="Cerrar sesión">Salir</button>
-            ) : (
-              <button onClick={() => setView('login')} className="btn" aria-label="Iniciar sesión">Ingresar</button>
-            )}
-          </nav>
-        </div>
-      </header>
+    <div className="app-container">
+      <Header
+        view={view}
+        onNavigate={navigateTo}
+        isAuthenticated={isAuthenticated}
+        user={user}
+        cartCount={cart.reduce((a, i) => a + i.quantity, 0)}
+        onLogout={handleLogout}
+      />
 
       {error && <p className="error" role="alert">{error}</p>}
       {loading && <Loading message="Cargando productos..." />}
 
       {!loading && renderMain()}
+
+      <Footer />
 
       <MobileNav
         view={view}

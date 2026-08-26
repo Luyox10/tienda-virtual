@@ -1132,6 +1132,24 @@ select {
   gap: 0.75rem;
 }
 
+/* PageHeader */
+.page-header {
+  margin-bottom: 1.25rem;
+}
+
+.page-header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--admin-text);
+}
+
+.page-header-subtitle {
+  font-size: 0.95rem;
+  color: var(--admin-muted);
+  margin: 0.35rem 0 0;
+}
+
 /* Unauthorized */
 .unauthorized {
   min-height: 100vh;

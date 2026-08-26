@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getShifts, updateShift } from '../api'
+import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
 
@@ -51,6 +52,7 @@ export default function Shifts({ token }) {
 
   return (
     <div className="dashboard">
+      <PageHeader title="Turnos" subtitle="Gestiona los horarios de atención de la tienda." />
       {error && <p className="error">{error}</p>}
       {message && <p className="message">{message}</p>}
 

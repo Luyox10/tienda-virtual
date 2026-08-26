@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getProducts, getShifts, createProduct, updateProduct } from '../api'
+import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
 import { productImage } from '../utils/productImage'
@@ -93,6 +94,7 @@ export default function Products({ token }) {
 
   return (
     <div className="dashboard">
+      <PageHeader title="Productos" subtitle="Gestiona los productos disponibles en tu tienda." />
       {error && <p className="error">{error}</p>}
       {message && <p className="message">{message}</p>}
 

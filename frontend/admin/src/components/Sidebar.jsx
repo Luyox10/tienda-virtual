@@ -14,10 +14,10 @@ export default function Sidebar({ active, onNavigate, onLogout, isOpen, onToggle
     <>
       <aside className={`sidebar ${isOpen ? 'open' : ''}`} aria-label="Menú de administración">
         <div className="sidebar-brand">
-          <span className="sidebar-emoji">🍔</span>
+          <span className="sidebar-emoji">�</span>
           <div>
-            <span className="sidebar-title">Tienda Virtual</span>
-            <span className="sidebar-subtitle">Admin</span>
+            <span className="sidebar-title">Sabor Delicioso</span>
+            <span className="sidebar-subtitle">Panel de control</span>
           </div>
         </div>
 

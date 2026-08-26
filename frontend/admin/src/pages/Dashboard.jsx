@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getDashboard, getShifts, getProducts, getOrders } from '../api'
+import PageHeader from '../components/PageHeader'
 import StatCard from '../components/StatCard'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
@@ -91,6 +92,10 @@ export default function Dashboard({ token, onNavigate }) {
 
   return (
     <div className="dashboard">
+      <PageHeader
+        title="Hola, Administrador 👋"
+        subtitle="Bienvenido al panel de administración de tu tienda."
+      />
       {dashboard === null && (
         <p className="warning">
           Datos del backend aún no disponibles. Se muestran mocks.

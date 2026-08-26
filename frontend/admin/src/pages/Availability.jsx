@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getProducts, getShifts, setProductAvailability } from '../api'
+import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import { productImage } from '../utils/productImage'
 
@@ -54,6 +55,7 @@ export default function Availability({ token }) {
 
   return (
     <div className="dashboard">
+      <PageHeader title="Disponibilidad" subtitle="Controla qué productos están disponibles hoy." />
       {error && <p className="error">{error}</p>}
       {message && <p className="message">{message}</p>}
 

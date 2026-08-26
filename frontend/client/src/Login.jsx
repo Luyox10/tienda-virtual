@@ -25,32 +25,41 @@ export default function Login({ onToggle, onSuccess }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form auth-form">
-      <h2>Iniciar sesión</h2>
-      {error && <p className="error">{error}</p>}
-      <input
-        name="email"
-        type="email"
-        placeholder="Correo electrónico"
-        required
-        autoComplete="email"
-      />
-      <input
-        name="password"
-        type="password"
-        placeholder="Contraseña"
-        required
-        autoComplete="current-password"
-      />
-      <button type="submit" className="btn" disabled={loading}>
-        {loading ? 'Ingresando...' : 'Ingresar'}
-      </button>
-      <p className="auth-link">
-        ¿No tienes cuenta?{' '}
-        <button type="button" className="link" onClick={onToggle}>
-          Regístrate
-        </button>
-      </p>
-    </form>
+    <main className="page auth-page">
+      <div className="auth-card">
+        <h2 className="auth-title">Bienvenido nuevamente</h2>
+        <p className="auth-subtitle">Inicia sesión para continuar con tu pedido.</p>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit} className="form auth-form">
+          <label htmlFor="login-email">Correo electrónico</label>
+          <input
+            id="login-email"
+            name="email"
+            type="email"
+            placeholder="tu@correo.com"
+            required
+            autoComplete="email"
+          />
+          <label htmlFor="login-password">Contraseña</label>
+          <input
+            id="login-password"
+            name="password"
+            type="password"
+            placeholder="Contraseña"
+            required
+            autoComplete="current-password"
+          />
+          <button type="submit" className="btn" disabled={loading}>
+            {loading ? 'Ingresando...' : 'Iniciar sesión'}
+          </button>
+        </form>
+        <p className="auth-link">
+          ¿No tienes cuenta?{' '}
+          <button type="button" className="link" onClick={onToggle}>
+            Crear cuenta
+          </button>
+        </p>
+      </div>
+    </main>
   )
 }

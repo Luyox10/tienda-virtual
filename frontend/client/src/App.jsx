@@ -12,6 +12,7 @@ import ProductsPage from './ProductsPage'
 import Cart from './Cart'
 import Orders from './Orders'
 import Checkout from './Checkout'
+import Profile from './Profile'
 import MobileNav from './MobileNav'
 import './styles.css'
 
@@ -205,6 +206,19 @@ function App() {
           onBack={() => setView('orders')}
         />
       ) : null
+    }
+
+    if (view === 'profile') {
+      if (isAuthenticated) {
+        return <Profile user={user} onLogout={handleLogout} />
+      }
+      return (
+        <main className="page card auth-message">
+          <h2>Mi cuenta</h2>
+          <p>Inicia sesión para ver tu perfil.</p>
+          <button className="btn" onClick={() => setView('login')}>Iniciar sesión</button>
+        </main>
+      )
     }
 
     return null

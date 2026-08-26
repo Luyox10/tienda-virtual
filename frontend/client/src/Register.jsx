@@ -47,50 +47,65 @@ export default function Register({ onToggle, onSuccess }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form auth-form">
-      <h2>Crear cuenta</h2>
-      {error && <p className="error">{error}</p>}
-      <input
-        name="full_name"
-        placeholder="Nombre completo"
-        required
-        autoComplete="name"
-      />
-      <input
-        name="email"
-        type="email"
-        placeholder="Correo electrónico"
-        required
-        autoComplete="email"
-      />
-      <input
-        name="phone"
-        placeholder="Teléfono (opcional)"
-        autoComplete="tel"
-      />
-      <input
-        name="password"
-        type="password"
-        placeholder="Contraseña"
-        required
-        autoComplete="new-password"
-      />
-      <input
-        name="confirm"
-        type="password"
-        placeholder="Confirmar contraseña"
-        required
-        autoComplete="new-password"
-      />
-      <button type="submit" className="btn" disabled={loading}>
-        {loading ? 'Creando cuenta...' : 'Registrarse'}
-      </button>
-      <p className="auth-link">
-        ¿Ya tienes cuenta?{' '}
-        <button type="button" className="link" onClick={onToggle}>
-          Inicia sesión
-        </button>
-      </p>
-    </form>
+    <main className="page auth-page">
+      <div className="auth-card">
+        <h2 className="auth-title">Crear cuenta</h2>
+        <p className="auth-subtitle">Regístrate para empezar a pedir.</p>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit} className="form auth-form">
+          <label htmlFor="register-name">Nombre completo</label>
+          <input
+            id="register-name"
+            name="full_name"
+            placeholder="Tu nombre completo"
+            required
+            autoComplete="name"
+          />
+          <label htmlFor="register-email">Correo electrónico</label>
+          <input
+            id="register-email"
+            name="email"
+            type="email"
+            placeholder="tu@correo.com"
+            required
+            autoComplete="email"
+          />
+          <label htmlFor="register-phone">Teléfono (opcional)</label>
+          <input
+            id="register-phone"
+            name="phone"
+            placeholder="999 999 999"
+            autoComplete="tel"
+          />
+          <label htmlFor="register-password">Contraseña</label>
+          <input
+            id="register-password"
+            name="password"
+            type="password"
+            placeholder="Mínimo 6 caracteres"
+            required
+            autoComplete="new-password"
+          />
+          <label htmlFor="register-confirm">Confirmar contraseña</label>
+          <input
+            id="register-confirm"
+            name="confirm"
+            type="password"
+            placeholder="Repite tu contraseña"
+            required
+            autoComplete="new-password"
+          />
+          <button type="submit" className="btn" disabled={loading}>
+            {loading ? 'Creando cuenta...' : 'Registrarse'}
+          </button>
+        </form>
+        <p className="auth-link">
+          ¿Ya tienes cuenta?{' '}
+          <button type="button" className="link" onClick={onToggle}>
+            Inicia sesión
+          </button>
+        </p>
+      </div>
+    </main>
   )
 }

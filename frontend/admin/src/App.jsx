@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { login } from './api'
 import AdminLayout from './components/AdminLayout'
 import Dashboard from './pages/Dashboard'
+import Products from './pages/Products'
+import Shifts from './pages/Shifts'
+import Availability from './pages/Availability'
 import './styles.css'
 
 function App() {
@@ -38,11 +41,14 @@ function App() {
 
   const renderPage = () => {
     if (page === 'dashboard') return <Dashboard token={auth.token} onNavigate={setPage} />
-    if (page === 'orders' || page === 'payments' || page === 'products' || page === 'shifts' || page === 'users' || page === 'availability' || page === 'reports' || page === 'settings') {
+    if (page === 'products') return <Products token={auth.token} />
+    if (page === 'shifts') return <Shifts token={auth.token} />
+    if (page === 'availability') return <Availability token={auth.token} />
+    if (page === 'orders' || page === 'payments' || page === 'users' || page === 'reports' || page === 'settings') {
       return (
         <div className="card">
           <h2>{page.charAt(0).toUpperCase() + page.slice(1)}</h2>
-          <p>Sección en construcción para la Fase 2.</p>
+          <p>Sección en construcción para la Fase 4.</p>
         </div>
       )
     }

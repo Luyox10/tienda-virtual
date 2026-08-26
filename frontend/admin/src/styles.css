@@ -792,3 +792,108 @@ select {
   color: var(--admin-muted);
 }
 
+/* Forms */
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.product-form {
+  max-width: 540px;
+}
+
+.product-form input,
+.product-form select {
+  padding: 0.65rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.product-form .btn { margin-right: 0.5rem; }
+
+.product-desc {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: var(--admin-muted);
+}
+
+/* Shifts legend */
+.shift-legend {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.shift-legend p { margin: 0 0 0.5rem; font-weight: 600; }
+.shift-legend ul { margin: 0; padding: 0; list-style: none; }
+.shift-legend li { margin: 0.35rem 0; }
+
+/* Availability */
+.availability-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.availability-shift {
+  margin: 1.25rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.availability-shift:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.availability-shift-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: var(--admin-text);
+}
+
+.availability-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.availability-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.availability-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.availability-info strong { font-weight: 600; }
+
+/* Product thumb consistent */
+.product-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #e5e7eb;
+}
+

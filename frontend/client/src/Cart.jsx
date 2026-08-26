@@ -2,18 +2,22 @@ import { useState } from 'react'
 import { createOrder } from './services/api'
 import { productImage } from './productImage'
 
+const DELIVERY = 3.00
+
 export default function Cart({ cart, products, isAuthenticated, token, onUpdate, onClear, onBack, onLogin, onOrder }) {
   const [error, setError] = useState(null)
 
   const findProduct = (id) => products.find((p) => p.id === Number(id))
 
-  const subtotal = (item) => {
+  const itemSubtotal = (item) => {
     const p = findProduct(item.product_id)
     const price = p?.price ?? item.price
     return Number((price * item.quantity).toFixed(2))
   }
 
-  const total = cart.reduce((sum, item) => sum + subtotal(item), 0)
+  const itemsTotal = cart.reduce((sum, item) => sum + itemSubtotal(item), 0)
+  const delivery = cart.length > 0 ? DELIVERY : 0
+  const total = Number((itemsTotal + delivery).toFixed(2))
 
   const changeQty = (id, delta) => {
     const item = cart.find((i) => i.product_id === id)
@@ -45,7 +49,7 @@ export default function Cart({ cart, products, isAuthenticated, token, onUpdate,
   }
 
   return (
-    <div>
+    <main className="page cart-page">
       <h2 className="page-title">
         <span>Mi carrito</span>
         <button className="btn secondary small" onClick={onBack}>
@@ -56,7 +60,7 @@ export default function Cart({ cart, products, isAuthenticated, token, onUpdate,
       {error && <p className="error">{error}</p>}
 
       {cart.length === 0 ? (
-        <p className="empty">El carrito está vacío.</p>
+        <p className="empty">El carrito está vacío. Agrega productos para comenzar.</p>
       ) : (
         <>
           <ul className="cart-list">
@@ -78,6 +82,7 @@ export default function Cart({ cart, products, isAuthenticated, token, onUpdate,
                     <button
                       className="btn small secondary"
                       onClick={() => changeQty(item.product_id, -1)}
+                      aria-label="Disminuir cantidad"
                     >
                       −
                     </button>
@@ -85,33 +90,47 @@ export default function Cart({ cart, products, isAuthenticated, token, onUpdate,
                     <button
                       className="btn small secondary"
                       onClick={() => changeQty(item.product_id, 1)}
+                      aria-label="Aumentar cantidad"
                     >
                       +
                     </button>
                   </div>
-                  <p className="cart-subtotal">S/ {subtotal(item).toFixed(2)}</p>
+                  <p className="cart-subtotal">S/ {itemSubtotal(item).toFixed(2)}</p>
                   <button
-                    className="btn small secondary"
+                    className="btn small danger"
                     onClick={() => removeItem(item.product_id)}
                   >
-                    Quitar
+                    Eliminar
                   </button>
                 </li>
               )
             })}
           </ul>
 
-          <div className="cart-footer">
-            <div className="cart-total">
-              <span>TOTAL</span>
-              <span className="cart-total-amount">S/ {total.toFixed(2)}</span>
+          <div className="cart-summary card">
+            <div className="summary-row">
+              <span>Subtotal</span>
+              <span>S/ {itemsTotal.toFixed(2)}</span>
             </div>
-            <button className="btn" onClick={checkout}>
-              {isAuthenticated ? 'IR A PAGAR' : 'Iniciar sesión para pagar'}
-            </button>
+            <div className="summary-row">
+              <span>Delivery</span>
+              <span>S/ {delivery.toFixed(2)}</span>
+            </div>
+            <div className="summary-row total-row">
+              <span>TOTAL</span>
+              <span>S/ {total.toFixed(2)}</span>
+            </div>
+            <div className="cart-actions">
+              <button className="btn secondary" onClick={onBack}>
+                Seguir comprando
+              </button>
+              <button className="btn" onClick={checkout}>
+                {isAuthenticated ? 'Continuar' : 'Iniciar sesión para continuar'}
+              </button>
+            </div>
           </div>
         </>
       )}
-    </div>
+    </main>
   )
 }

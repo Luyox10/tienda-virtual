@@ -4,10 +4,17 @@ import { productImage } from './productImage'
 
 export default function ProductList({ products, current, onAdd }) {
   const [selected, setSelected] = useState(null)
+  const [justAdded, setJustAdded] = useState(null)
 
   const currentShiftId = current?.current?.id
   const isOpen = current?.current?.is_open
   const isAvailable = (p) => p.is_active && p.shift_id === currentShiftId && isOpen
+
+  const handleAdd = (product, quantity) => {
+    onAdd(product, quantity)
+    setJustAdded(product.name)
+    setTimeout(() => setJustAdded(null), 1600)
+  }
 
   return (
     <section className="products-section">
@@ -55,7 +62,7 @@ export default function ProductList({ products, current, onAdd }) {
                   className="btn"
                   onClick={(e) => {
                     e.stopPropagation()
-                    if (inCurrent) onAdd(p, 1)
+                    if (inCurrent) handleAdd(p, 1)
                   }}
                   disabled={!inCurrent}
                 >
@@ -72,8 +79,15 @@ export default function ProductList({ products, current, onAdd }) {
           product={selected}
           inCurrent={isAvailable(selected)}
           onClose={() => setSelected(null)}
-          onAdd={onAdd}
+          onAdd={handleAdd}
         />
+      )}
+
+      {justAdded && (
+        <div className="toast" role="status" aria-live="polite">
+          <span className="toast-icon" aria-hidden="true">✓</span>
+          <span>Se agregó <strong>{justAdded}</strong> al carrito</span>
+        </div>
       )}
     </section>
   )

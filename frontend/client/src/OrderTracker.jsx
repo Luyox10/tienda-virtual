@@ -1,24 +1,25 @@
 import { useEffect, useState } from 'react'
-import { getOrder } from './services/api'
+import { getOrder } from './services/ordersService'
 import { WHATSAPP_NUMBER } from './config'
 
-const STATUS_ORDER = [
-  'PENDING_PAYMENT',
-  'PAYMENT_REVIEW',
-  'ACCEPTED',
-  'COMPLETED',
+const STEPS = [
+  { key: 'PENDING_PAYMENT', label: 'Pedido recibido', desc: 'Hemos recibido tu pedido.' },
+  { key: 'PAYMENT_REVIEW', label: 'Pago confirmado', desc: 'Tu pago fue confirmado.' },
+  { key: 'ACCEPTED', label: 'En preparación', desc: 'Tu pedido se está preparando.' },
+  { key: 'READY', label: 'Listo para entrega', desc: 'Tu pedido está listo.' },
+  { key: 'COMPLETED', label: 'Entregado', desc: 'Pedido entregado.' },
 ]
 
 const STATUS_LABELS = {
-  PENDING_PAYMENT: { label: 'Pedido creado', icon: '✓', active: true },
-  PAYMENT_REVIEW: { label: 'Pago en revisión', icon: '🟡', active: true },
-  ACCEPTED: { label: 'Pedido aceptado', icon: '✓', active: true },
-  REJECTED: { label: 'Pago rechazado', icon: '✗', active: true, danger: true },
-  CANCELLED: { label: 'Pedido cancelado', icon: '✗', active: true, danger: true },
-  COMPLETED: { label: 'Pedido completado', icon: '✓', active: true },
+  PENDING_PAYMENT: { label: 'Pendiente de pago', color: 'pending' },
+  PAYMENT_REVIEW: { label: 'Pago en revisión', color: 'pending' },
+  ACCEPTED: { label: 'Aceptado', color: 'accepted' },
+  REJECTED: { label: 'Rechazado', color: 'rejected' },
+  CANCELLED: { label: 'Cancelado', color: 'rejected' },
+  COMPLETED: { label: 'Entregado', color: 'accepted' },
 }
 
-export default function OrderTracker({ order, token }) {
+export default function OrderTracker({ order, token, onBack }) {
   const [live, setLive] = useState(order)
 
   useEffect(() => {
@@ -32,69 +33,87 @@ export default function OrderTracker({ order, token }) {
   }, [order, token])
 
   const status = live.status
-  const isTerminal = status === 'REJECTED' || status === 'CANCELLED'
-  const reached = (step) => {
-    if (isTerminal) return status === step
-    if (status === 'PENDING_PAYMENT' && step === 'PENDING_PAYMENT') return true
-    if (status === 'PAYMENT_REVIEW') return step !== 'ACCEPTED' && step !== 'COMPLETED'
-    if (status === 'ACCEPTED' || status === 'COMPLETED') return step !== 'COMPLETED' || status === 'COMPLETED'
-    return false
+  const isDone = (step) => {
+    if (status === 'REJECTED' || status === 'CANCELLED') return false
+    const currentIndex = STEPS.findIndex((s) => s.key === status)
+    const stepIndex = STEPS.findIndex((s) => s.key === step)
+    return stepIndex <= currentIndex
   }
+
+  const isCurrent = (step) => step === status
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     `Hola, consulto por mi pedido #${live.id} de DeliTurnos.`
   )}`
 
-  return (
-    <div className="card detail tracker-card">
-      <h3>Pedido #{live.id}</h3>
-      <p className="order-total">Total: S/ {live.total}</p>
-      <p>
-        Estado actual:{' '}
-        <span className={`badge ${status === 'ACCEPTED' || status === 'COMPLETED' ? 'accepted' : isTerminal ? 'rejected' : 'pending'}`}>
-          {STATUS_LABELS[status]?.label || status}
-        </span>
-      </p>
+  const currentInfo = STATUS_LABELS[status] || { label: status, color: 'pending' }
 
-      <div className="tracker">
-        {STATUS_ORDER.map((step) => {
-          const info = STATUS_LABELS[step]
-          const done = reached(step)
-          const current = status === step
+  return (
+    <main className="page tracker-page">
+      <h2 className="page-title">
+        <span>Seguimiento del pedido</span>
+        <button className="btn secondary small" onClick={onBack}>
+          Volver
+        </button>
+      </h2>
+
+      <div className="card order-summary">
+        <div className="order-summary-row">
+          <div>
+            <p className="order-label">Pedido</p>
+            <p className="order-big">#ORD-{String(live.id).padStart(4, '0')}</p>
+          </div>
+          <div>
+            <p className="order-label">Total</p>
+            <p className="order-big">S/ {Number(live.total).toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="order-label">Estado</p>
+            <span className={`order-status-badge ${currentInfo.color}`}>{currentInfo.label}</span>
+          </div>
+        </div>
+        <p className="order-date">{new Date(live.created_at).toLocaleString('es-PE')}</p>
+      </div>
+
+      <div className="card tracker-timeline">
+        {STEPS.map((step, index) => {
+          const done = isDone(step.key)
+          const current = isCurrent(step.key)
+          const pending = !done
+          const date = done && live.created_at ? new Date(live.created_at).toLocaleString('es-PE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Pendiente'
           return (
-            <div
-              key={step}
-              className={`tracker-step ${done ? 'done' : ''} ${current ? 'current' : ''} ${isTerminal && !done ? 'muted' : ''}`}
-            >
-              <div className="tracker-icon">{done ? info.icon : '⚪'}</div>
-              <p className="tracker-label">{info.label}</p>
+            <div key={step.key} className={`timeline-item ${done ? 'done' : ''} ${current ? 'current' : ''}`}>
+              <div className="timeline-marker" aria-hidden="true">
+                {done ? '✓' : current ? '🟠' : '○'}
+              </div>
+              <div className="timeline-content">
+                <strong>{step.label}</strong>
+                <p>{current ? step.desc : date}</p>
+              </div>
+              {index < STEPS.length - 1 && <div className="timeline-line" aria-hidden="true" />}
             </div>
           )
         })}
       </div>
 
-      <div className="tracker-products">
+      <div className="card tracker-products">
         <h4>Productos</h4>
         <ul>
           {live.items?.map((i) => (
             <li key={i.id}>
-              {i.product_name} x {i.quantity} — S/ {i.subtotal}
+              {i.product_name} x {i.quantity} — S/ {Number(i.subtotal).toFixed(2)}
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="whatsapp-section">
-        <p>¿Necesitas ayuda?</p>
-        <a
-          className="btn whatsapp"
-          href={whatsappUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
+      <div className="card help-section">
+        <h4>¿Necesitas ayuda?</h4>
+        <p>Puedes contactar al administrador para consultar el estado de tu pedido.</p>
+        <a className="btn whatsapp" href={whatsappUrl} target="_blank" rel="noreferrer">
           💬 Contactar por WhatsApp
         </a>
       </div>
-    </div>
+    </main>
   )
 }

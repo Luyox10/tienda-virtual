@@ -1,12 +1,14 @@
 export default function MobileNav({ view, onNavigate, isAuthenticated, cartCount, onLogin, onLogout }) {
   const items = [
     { key: 'home', label: 'Inicio', emoji: '🏠' },
-    { key: 'orders', label: 'Pedidos', emoji: '📦' },
+    { key: 'products', label: 'Productos', emoji: '🍽️' },
     { key: 'cart', label: 'Carrito', emoji: '🛒' },
+    { key: 'orders', label: 'Pedidos', emoji: '📦' },
+    { key: 'profile', label: 'Perfil', emoji: '👤' },
   ]
 
   const go = (key) => {
-    if (key === 'orders' && !isAuthenticated) {
+    if ((key === 'orders' || key === 'profile') && !isAuthenticated) {
       onLogin()
     } else {
       onNavigate(key)
@@ -31,23 +33,14 @@ export default function MobileNav({ view, onNavigate, isAuthenticated, cartCount
           <span className="mobile-nav-label">{item.label}</span>
         </button>
       ))}
-      {isAuthenticated ? (
+      {isAuthenticated && (
         <button
           className="mobile-nav-item"
           onClick={onLogout}
           aria-label="Cerrar sesión"
         >
-          <span className="mobile-nav-icon" aria-hidden="true">👤</span>
+          <span className="mobile-nav-icon" aria-hidden="true">�</span>
           <span className="mobile-nav-label">Salir</span>
-        </button>
-      ) : (
-        <button
-          className="mobile-nav-item"
-          onClick={onLogin}
-          aria-label="Iniciar sesión"
-        >
-          <span className="mobile-nav-icon" aria-hidden="true">👤</span>
-          <span className="mobile-nav-label">Ingresar</span>
         </button>
       )}
     </nav>

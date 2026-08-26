@@ -8,12 +8,16 @@ import Availability from './pages/Availability'
 import Orders from './pages/Orders'
 import Payments from './pages/Payments'
 import Users from './pages/Users'
+import Reports from './pages/Reports'
+import Settings from './pages/Settings'
+import Modal from './components/Modal'
 import './styles.css'
 
 function App() {
   const [auth, setAuth] = useState(null)
   const [error, setError] = useState(null)
   const [page, setPage] = useState('dashboard')
+  const [logoutModal, setLogoutModal] = useState(false)
 
   useEffect(() => {
     const saved = localStorage.getItem('admin')
@@ -65,14 +69,8 @@ function App() {
     if (page === 'orders') return <Orders token={auth.token} />
     if (page === 'payments') return <Payments token={auth.token} />
     if (page === 'users') return <Users token={auth.token} />
-    if (page === 'reports' || page === 'settings') {
-      return (
-        <div className="card">
-          <h2>{page.charAt(0).toUpperCase() + page.slice(1)}</h2>
-          <p>Sección en construcción para la Fase 5.</p>
-        </div>
-      )
-    }
+    if (page === 'reports') return <Reports token={auth.token} />
+    if (page === 'settings') return <Settings token={auth.token} />
     return <Dashboard token={auth.token} onNavigate={setPage} />
   }
 
@@ -82,7 +80,7 @@ function App() {
       {auth ? (
         <AdminLayout
           user={auth.user}
-          onLogout={logout}
+          onLogout={() => setLogoutModal(true)}
           page={page}
           onNavigate={setPage}
         >
@@ -93,7 +91,7 @@ function App() {
           <form onSubmit={handleLogin} className="form login-form">
             <div className="brand auth-brand">
               <span className="brand-dot" />
-              DeliTurnos Admin
+              Sabor Delicioso Admin
             </div>
             <h2>Iniciar sesión</h2>
             <input name="email" type="email" placeholder="Correo" required />
@@ -101,6 +99,21 @@ function App() {
             <button type="submit" className="btn">Ingresar</button>
           </form>
         </div>
+      )}
+
+      {logoutModal && (
+        <Modal
+          title="¿Deseas cerrar sesión?"
+          onClose={() => setLogoutModal(false)}
+          onConfirm={() => {
+            logout()
+            setLogoutModal(false)
+          }}
+          confirmClass="btn danger"
+          confirmText="Cerrar sesión"
+        >
+          Tu sesión actual será finalizada.
+        </Modal>
       )}
     </div>
   )

@@ -540,3 +540,255 @@ select {
   .admin-title { font-size: 1rem; }
 }
 
+/* Dashboard */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.warning {
+  background: #fffbeb;
+  color: #b45309;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #f59e0b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.loading-message {
+  color: var(--admin-muted);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.dashboard-section {
+  background: #fff;
+  border-radius: var(--admin-radius);
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  color: var(--admin-text);
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.stat-icon {
+  font-size: 1.4rem;
+}
+
+.stat-trend {
+  font-size: 0.75rem;
+  color: var(--admin-muted);
+  background: #f3f4f6;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+/* Quick actions */
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.quick-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.1rem;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--admin-text);
+  transition: all 0.15s;
+}
+
+.quick-action:hover {
+  border-color: var(--admin-orange);
+  color: var(--admin-orange);
+}
+
+.quick-action-icon {
+  font-size: 1.1rem;
+}
+
+/* Charts */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.chart-card {
+  min-height: 240px;
+}
+
+.line-chart {
+  width: 100%;
+  height: 180px;
+  padding: 0 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.line-chart-plot {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.line-chart-point {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.line-chart-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--admin-orange);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--admin-orange);
+}
+
+.line-chart-label {
+  font-size: 0.7rem;
+  color: var(--admin-muted);
+  margin-top: 0.35rem;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 160px;
+  padding: 0 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.bar-chart-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+}
+
+.bar-chart-bar {
+  width: 32px;
+  background: linear-gradient(to top, var(--admin-orange), #fb923c);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.5s ease;
+  min-height: 4px;
+}
+
+.bar-chart-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.bar-chart-value {
+  font-size: 0.7rem;
+  color: var(--admin-muted);
+}
+
+/* Tables */
+.empty-cell {
+  text-align: center;
+  color: var(--admin-muted);
+  padding: 1.5rem;
+}
+
+/* Shifts */
+.shift-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shift-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.shift-item:last-child { border-bottom: none; }
+
+.shift-time {
+  font-size: 0.85rem;
+  color: var(--admin-muted);
+  margin: 0.15rem 0 0;
+}
+
+/* Top products */
+.top-products {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.top-product {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.top-product:last-child { border-bottom: none; }
+
+.top-product-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f3f4f6;
+}
+
+.top-product-info p {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--admin-muted);
+}
+

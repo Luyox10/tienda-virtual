@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { login } from './api'
 import AdminLayout from './components/AdminLayout'
-import AdminPanel from './AdminPanel'
+import Dashboard from './pages/Dashboard'
 import './styles.css'
 
 function App() {
@@ -37,7 +37,7 @@ function App() {
   }
 
   const renderPage = () => {
-    if (page === 'dashboard') return <AdminPanel auth={auth} onLogout={logout} />
+    if (page === 'dashboard') return <Dashboard token={auth.token} onNavigate={setPage} />
     if (page === 'orders' || page === 'payments' || page === 'products' || page === 'shifts' || page === 'users' || page === 'availability' || page === 'reports' || page === 'settings') {
       return (
         <div className="card">
@@ -46,7 +46,7 @@ function App() {
         </div>
       )
     }
-    return <AdminPanel auth={auth} onLogout={logout} />
+    return <Dashboard token={auth.token} onNavigate={setPage} />
   }
 
   return (

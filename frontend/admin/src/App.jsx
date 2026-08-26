@@ -42,6 +42,21 @@ function App() {
     setPage('dashboard')
   }
 
+  const isAdmin = auth?.user?.role === 'admin'
+
+  if (auth && !isAdmin) {
+    return (
+      <div className="unauthorized">
+        <h2>Acceso no autorizado</h2>
+        <p>
+          Esta área es exclusiva para administradores. Si tienes un rol de cliente,
+          usa la tienda principal.
+        </p>
+        <button className="btn" onClick={logout}>Cerrar sesión</button>
+      </div>
+    )
+  }
+
   const renderPage = () => {
     if (page === 'dashboard') return <Dashboard token={auth.token} onNavigate={setPage} />
     if (page === 'products') return <Products token={auth.token} />

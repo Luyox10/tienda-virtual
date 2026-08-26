@@ -151,14 +151,6 @@ export default function AdminPanel({ auth, onLogout }) {
 
   return (
     <div className="container">
-      <header className="header">
-        <h1>Tienda Virtual - Administrador</h1>
-        <div>
-          <span>{auth.user.email} ({auth.user.role})</span>
-          <button onClick={onLogout} className="btn">Cerrar sesión</button>
-        </div>
-      </header>
-
       {error && <p className="error">{error}</p>}
       {message && <p className="message">{message}</p>}
 

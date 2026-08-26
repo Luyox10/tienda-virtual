@@ -1297,6 +1297,40 @@ select {
 
 .btn.danger:hover { background: #dc2626; }
 
+/* Modal forms */
+.reject-modal label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.35rem;
+}
+
+.small-input.full {
+  width: 100%;
+  min-width: auto;
+}
+
+/* Mobile tables */
+@media (max-width: 640px) {
+  .data-table {
+    font-size: 0.85rem;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 0.6rem 0.5rem;
+  }
+  .data-table th:nth-child(1),
+  .data-table td:nth-child(1),
+  .data-table th:nth-child(4),
+  .data-table td:nth-child(4) {
+    display: none;
+  }
+  .payment-row-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 /* Unauthorized */
 .unauthorized {
   min-height: 100vh;

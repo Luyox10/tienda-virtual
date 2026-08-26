@@ -3,6 +3,7 @@ import { getPayments, approvePayment, rejectPayment } from '../api'
 import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
+import Modal from '../components/Modal'
 
 export default function Payments({ token }) {
   const [payments, setPayments] = useState([])
@@ -10,6 +11,7 @@ export default function Payments({ token }) {
   const [error, setError] = useState(null)
   const [message, setMessage] = useState(null)
   const [reason, setReason] = useState({})
+  const [rejectModal, setRejectModal] = useState(null)
 
   const load = () => {
     setLoading(true)
@@ -86,14 +88,10 @@ export default function Payments({ token }) {
                       <button className="btn small" onClick={() => approve(p.id)}>
                         Aprobar
                       </button>
-                      <input
-                        type="text"
-                        className="small-input"
-                        placeholder="Motivo"
-                        value={reason[p.id] || ''}
-                        onChange={(e) => setReason({ ...reason, [p.id]: e.target.value })}
-                      />
-                      <button className="btn small" onClick={() => reject(p.id)}>
+                      <button
+                        className="btn small secondary"
+                        onClick={() => setRejectModal({ id: p.id, amount: p.amount })}
+                      >
                         Rechazar
                       </button>
                     </div>
@@ -106,6 +104,33 @@ export default function Payments({ token }) {
           )}
         </DataTable>
       </section>
+
+      {rejectModal && (
+        <Modal
+          title={`¿Deseas rechazar el pago #${rejectModal.id}?`}
+          onClose={() => setRejectModal(null)}
+          onConfirm={() => {
+            reject(rejectModal.id)
+            setRejectModal(null)
+          }}
+          confirmText="Rechazar pago"
+          confirmClass="btn danger"
+        >
+          <div className="reject-modal">
+            <p>Monto: S/ {rejectModal.amount}</p>
+            <label htmlFor="reject-reason">Motivo del rechazo</label>
+            <input
+              id="reject-reason"
+              value={reason[rejectModal.id] || ''}
+              onChange={(e) =>
+                setReason({ ...reason, [rejectModal.id]: e.target.value })
+              }
+              placeholder="Escribe el motivo"
+              className="small-input full"
+            />
+          </div>
+        </Modal>
+      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { getProducts, getShifts, createProduct, updateProduct } from '../api'
 import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
+import Modal from '../components/Modal'
 import { productImage } from '../utils/productImage'
 
 export default function Products({ token }) {
@@ -11,6 +12,7 @@ export default function Products({ token }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [message, setMessage] = useState(null)
+  const [confirm, setConfirm] = useState(null)
   const [form, setForm] = useState({
     id: null,
     name: '',
@@ -78,10 +80,12 @@ export default function Products({ token }) {
     })
   }
 
-  const toggleActive = async (p) => {
+  const doToggleActive = async () => {
+    if (!confirm) return
     try {
-      await updateProduct(p.id, { is_active: !p.is_active }, token)
-      setMessage(`Producto ${p.is_active ? 'desactivado' : 'activado'}`)
+      await updateProduct(confirm.product.id, { is_active: confirm.nextActive }, token)
+      setMessage(`Producto ${confirm.nextActive ? 'activado' : 'desactivado'}`)
+      setConfirm(null)
       load()
     } catch (err) {
       setError(err.message)
@@ -178,7 +182,12 @@ export default function Products({ token }) {
                 <td><StatusBadge status={p.is_active ? 'active' : 'inactive'} /></td>
                 <td>
                   <button className="btn small" onClick={() => edit(p)}>Editar</button>
-                  <button className="btn small" onClick={() => toggleActive(p)}>
+                  <button
+                    className="btn small"
+                    onClick={() =>
+                      setConfirm({ product: p, nextActive: !p.is_active })
+                    }
+                  >
                     {p.is_active ? 'Desactivar' : 'Activar'}
                   </button>
                 </td>
@@ -187,6 +196,17 @@ export default function Products({ token }) {
           )}
         </DataTable>
       </section>
+
+      {confirm && (
+        <Modal
+          title={`¿Deseas ${confirm.nextActive ? 'activar' : 'desactivar'} "${confirm.product.name}"?`}
+          onClose={() => setConfirm(null)}
+          onConfirm={doToggleActive}
+          confirmText="Confirmar"
+        >
+          Esta acción cambiará la visibilidad del producto en la tienda.
+        </Modal>
+      )}
     </div>
   )
 }

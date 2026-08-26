@@ -5,6 +5,9 @@ import Dashboard from './pages/Dashboard'
 import Products from './pages/Products'
 import Shifts from './pages/Shifts'
 import Availability from './pages/Availability'
+import Orders from './pages/Orders'
+import Payments from './pages/Payments'
+import Users from './pages/Users'
 import './styles.css'
 
 function App() {
@@ -44,11 +47,14 @@ function App() {
     if (page === 'products') return <Products token={auth.token} />
     if (page === 'shifts') return <Shifts token={auth.token} />
     if (page === 'availability') return <Availability token={auth.token} />
-    if (page === 'orders' || page === 'payments' || page === 'users' || page === 'reports' || page === 'settings') {
+    if (page === 'orders') return <Orders token={auth.token} />
+    if (page === 'payments') return <Payments token={auth.token} />
+    if (page === 'users') return <Users token={auth.token} />
+    if (page === 'reports' || page === 'settings') {
       return (
         <div className="card">
           <h2>{page.charAt(0).toUpperCase() + page.slice(1)}</h2>
-          <p>Sección en construcción para la Fase 4.</p>
+          <p>Sección en construcción para la Fase 5.</p>
         </div>
       )
     }

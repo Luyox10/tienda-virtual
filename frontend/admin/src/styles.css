@@ -897,3 +897,152 @@ select {
   background: #e5e7eb;
 }
 
+/* Orders */
+.orders-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-pill {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--admin-muted);
+  transition: all 0.15s;
+}
+
+.filter-pill:hover,
+.filter-pill.active {
+  background: var(--admin-orange);
+  color: #fff;
+  border-color: var(--admin-orange);
+}
+
+.order-detail {
+  padding: 1.5rem;
+}
+
+.order-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.order-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.detail-label {
+  font-size: 0.8rem;
+  color: var(--admin-muted);
+  margin: 0.5rem 0 0.15rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.detail-value {
+  font-weight: 600;
+  margin: 0;
+}
+
+.detail-subtitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.payment-box {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.payment-proof img {
+  max-width: 100%;
+  max-height: 280px;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.payment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.reject-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.reject-group input {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  min-width: 220px;
+}
+
+.payment-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.payment-row-actions .small-input {
+  width: 140px;
+}
+
+/* Users */
+.users-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.users-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.users-search,
+.users-role-filter {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.users-search {
+  min-width: 260px;
+}
+

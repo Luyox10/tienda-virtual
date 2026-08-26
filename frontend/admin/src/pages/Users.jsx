@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getUsers, getOrders } from '../api'
+import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
 
@@ -39,6 +40,7 @@ export default function Users({ token }) {
 
   return (
     <div className="dashboard">
+      <PageHeader title="Usuarios" subtitle="Administra y consulta los usuarios registrados." />
       {error && <p className="error">{error}</p>}
 
       <section className="dashboard-section">

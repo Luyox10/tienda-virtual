@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getOrders, getOrder, getPayments, approvePayment, rejectPayment } from '../api'
+import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
 
@@ -79,6 +80,7 @@ export default function Orders({ token }) {
 
   return (
     <div className="dashboard">
+      <PageHeader title="Pedidos" subtitle="Gestiona y supervisa los pedidos realizados." />
       {error && <p className="error">{error}</p>}
       {message && <p className="message">{message}</p>}
 

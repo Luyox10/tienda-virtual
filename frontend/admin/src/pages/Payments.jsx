@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getPayments, approvePayment, rejectPayment } from '../api'
+import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
 
@@ -51,6 +52,7 @@ export default function Payments({ token }) {
 
   return (
     <div className="dashboard">
+      <PageHeader title="Pagos" subtitle="Revisa y valida los pagos realizados por los clientes." />
       {error && <p className="error">{error}</p>}
       {message && <p className="message">{message}</p>}
 

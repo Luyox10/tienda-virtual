@@ -16,7 +16,6 @@ export default function Checkout({ order, token, onDone, onBack }) {
       return
     }
     setError(null)
-    setFile(f)
 
     const reader = new FileReader()
     reader.onloadend = () => setPreview(reader.result)

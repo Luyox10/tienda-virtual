@@ -39,6 +39,10 @@ export default function Checkout({ order, token, onDone, onBack }) {
       setError('Selecciona el comprobante de pago')
       return
     }
+    if (order.status !== 'PENDING_PAYMENT') {
+      setError('Tu pago está siendo procesado en estos momentos. Evita enviar doble pago y espera a que te acepten el pago anterior.')
+      return
+    }
     setLoading(true)
     setError(null)
     try {
@@ -52,7 +56,7 @@ export default function Checkout({ order, token, onDone, onBack }) {
       setMessage('Comprobante enviado. Tu pago está siendo revisado.')
       setTimeout(onDone, 1500)
     } catch (err) {
-      setError(err.message)
+      setError('Tu pago está siendo procesado en estos momentos. Evita enviar doble pago y espera a que te acepten el pago anterior.')
     } finally {
       setLoading(false)
     }

@@ -3,11 +3,9 @@ import { getOrder } from './services/ordersService'
 import { WHATSAPP_NUMBER } from './config'
 
 const STEPS = [
-  { key: 'PENDING_PAYMENT', label: 'Pedido recibido', desc: 'Hemos recibido tu pedido.' },
-  { key: 'PAYMENT_REVIEW', label: 'Pago confirmado', desc: 'Tu pago fue confirmado.' },
-  { key: 'ACCEPTED', label: 'En preparación', desc: 'Tu pedido se está preparando.' },
-  { key: 'READY', label: 'Listo para entrega', desc: 'Tu pedido está listo.' },
-  { key: 'COMPLETED', label: 'Entregado', desc: 'Pedido entregado.' },
+  { key: 'PENDING_PAYMENT', label: 'Enviado', desc: 'Tu pedido fue enviado.' },
+  { key: 'PAYMENT_REVIEW', label: 'Pendiente', desc: 'Tu pago está siendo revisado.' },
+  { key: 'ACCEPTED', label: 'Aceptado', desc: 'Tu pedido fue aceptado.' },
 ]
 
 const STATUS_LABELS = {
@@ -35,12 +33,16 @@ export default function OrderTracker({ order, token, onBack }) {
   const status = live.status
   const isDone = (step) => {
     if (status === 'REJECTED' || status === 'CANCELLED') return false
-    const currentIndex = STEPS.findIndex((s) => s.key === status)
+    let currentIndex = STEPS.findIndex((s) => s.key === status)
+    if (currentIndex === -1) currentIndex = STEPS.length - 1
     const stepIndex = STEPS.findIndex((s) => s.key === step)
     return stepIndex <= currentIndex
   }
 
-  const isCurrent = (step) => step === status
+  const isCurrent = (step) => {
+    if (['READY', 'COMPLETED'].includes(status)) return step === 'ACCEPTED'
+    return step === status
+  }
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     `Hola, consulto por mi pedido #${live.id} de DeliTurnos.`
@@ -118,13 +120,6 @@ export default function OrderTracker({ order, token, onBack }) {
         </div>
       )}
 
-      <div className="card help-section">
-        <h4>¿Necesitas ayuda?</h4>
-        <p>Puedes contactar al administrador para consultar el estado de tu pedido.</p>
-        <a className="btn whatsapp" href={whatsappUrl} target="_blank" rel="noreferrer">
-          💬 Contactar por WhatsApp
-        </a>
-      </div>
     </main>
   )
 }

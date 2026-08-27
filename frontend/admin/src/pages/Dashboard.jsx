@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getDashboard, getShifts, getProducts, getOrders } from '../api'
 import PageHeader from '../components/PageHeader'
 import StatCard from '../components/StatCard'
@@ -6,27 +6,9 @@ import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
 import { productImage } from '../utils/productImage'
 
-// MOCKS TEMPORALES — reemplazar por datos reales del backend cuando existan
-const MOCK_SALES_7_DAYS = [
-  { day: 'L', amount: 120 },
-  { day: 'M', amount: 190 },
-  { day: 'M', amount: 240 },
-  { day: 'J', amount: 310 },
-  { day: 'V', amount: 420 },
-  { day: 'S', amount: 380 },
-  { day: 'D', amount: 510 },
-]
-
-const MOCK_SALES_BY_SHIFT = [
-  { name: 'Mañana', amount: 540 },
-  { name: 'Tarde', amount: 890 },
-  { name: 'Noche', amount: 120 },
-]
-
-const MOCK_TOP_PRODUCTS = [
-  { id: 1, name: 'Causa de pollo', quantity: 45, total: 540, image_url: '/imagenes/productos/causa-pollo.jpg' },
-  { id: 2, name: 'Papa rellena', quantity: 32, total: 384, image_url: '/imagenes/productos/papa-rellena.jpg' },
-]
+function formatDayLabel(d) {
+  return d.toLocaleDateString('es-PE', { weekday: 'narrow' })
+}
 
 function formatCurrency(value) {
   return `S/ ${Number(value || 0).toFixed(2)}`
@@ -74,15 +56,58 @@ export default function Dashboard({ token, onNavigate }) {
 
   const recentOrders = orders.slice(0, 5)
 
-  const sales7Days = MOCK_SALES_7_DAYS
-  const salesByShift = MOCK_SALES_BY_SHIFT
-  const topProducts = products.length
-    ? products.slice(0, 3).map((p, i) => ({
-        ...p,
-        quantity: MOCK_TOP_PRODUCTS[i]?.quantity || 0,
-        total: MOCK_TOP_PRODUCTS[i]?.total || 0,
-      }))
-    : MOCK_TOP_PRODUCTS
+  const { sales7Days, salesByShift, topProducts } = useMemo(() => {
+    const accepted = orders.filter((o) => ['ACCEPTED', 'COMPLETED'].includes(o.status))
+
+    const today = new Date()
+    const last7 = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(today)
+      d.setDate(d.getDate() - (6 - i))
+      d.setHours(0, 0, 0, 0)
+      return d
+    })
+
+    const sales7 = last7.map((d) => {
+      const dayTotal = accepted
+        .filter((o) => {
+          const od = new Date(o.created_at)
+          od.setHours(0, 0, 0, 0)
+          return od.getTime() === d.getTime()
+        })
+        .reduce((sum, o) => sum + Number(o.total), 0)
+      return { day: formatDayLabel(d), amount: dayTotal }
+    })
+
+    const shiftMap = new Map(shifts.map((s) => [s.id, s.name]))
+    const salesShift = shifts.map((s) => ({
+      name: s.name,
+      amount: accepted
+        .filter((o) => (o.shift_id ?? o.shift_name) === s.id)
+        .reduce((sum, o) => sum + Number(o.total), 0),
+    }))
+
+    const productTotals = new Map()
+    accepted.forEach((o) => {
+      (o.items || []).forEach((i) => {
+        const id = i.product_id || i.id
+        const current = productTotals.get(id) || {
+          id,
+          name: i.product_name,
+          quantity: 0,
+          total: 0,
+          image_url: i.image_url,
+        }
+        current.quantity += Number(i.quantity)
+        current.total += Number(i.subtotal)
+        productTotals.set(id, current)
+      })
+    })
+    const top = Array.from(productTotals.values())
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 3)
+
+    return { sales7Days: sales7, salesByShift: salesShift, topProducts: top }
+  }, [orders, shifts])
 
   const maxSales = Math.max(...sales7Days.map((d) => d.amount), 1)
   const maxShift = Math.max(...salesByShift.map((d) => d.amount), 1)

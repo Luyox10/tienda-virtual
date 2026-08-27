@@ -527,7 +527,7 @@ select {
   }
 
   .admin-main {
-    margin-left: 260px;
+    margin-left: 0;
   }
 
   .menu-toggle,
@@ -1373,4 +1373,80 @@ select {
 
 .unauthorized h2 { color: var(--admin-red); margin-bottom: 0.5rem; }
 .unauthorized p { color: var(--admin-muted); max-width: 420px; }
+
+/* Order detail modal */
+.order-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 1rem;
+}
+
+.order-modal {
+  background: #fff;
+  border-radius: var(--admin-radius);
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+}
+
+.order-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.order-modal-products {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.order-modal-product {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.order-modal-product img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #e5e7eb;
+}
+
+.order-modal-product-info {
+  flex: 1;
+}
+
+.order-modal-product-info strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.order-modal-product-info p {
+  margin: 0.15rem 0;
+  font-size: 0.85rem;
+  color: var(--admin-muted);
+}
+
+.order-modal-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
 

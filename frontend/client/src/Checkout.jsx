@@ -2,15 +2,13 @@ import { useState } from 'react'
 import { createPayment } from './services/api'
 import { YAPE_NUMBER } from './config'
 
-const METHODS = [
-  { key: 'YAPE', label: 'Yape' },
-  { key: 'CARD', label: 'Tarjeta' },
-  { key: 'CASH', label: 'Efectivo' },
-]
+const METHOD = 'YAPE'
 
 export default function Checkout({ order, token, onDone, onBack }) {
-  const [method, setMethod] = useState('YAPE')
+  const [method, setMethod] = useState(METHOD)
   const [preview, setPreview] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [viewProof, setViewProof] = useState(false)
   const [error, setError] = useState(null)
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -23,9 +21,15 @@ export default function Checkout({ order, token, onDone, onBack }) {
       return
     }
     setError(null)
+    setUploading(true)
+    setPreview(null)
+    setViewProof(false)
 
     const reader = new FileReader()
-    reader.onloadend = () => setPreview(reader.result)
+    reader.onloadend = () => {
+      setPreview(reader.result)
+      setUploading(false)
+    }
     reader.readAsDataURL(f)
   }
 
@@ -42,7 +46,7 @@ export default function Checkout({ order, token, onDone, onBack }) {
         amount: order.total,
         method,
       }
-      if (method === 'YAPE') body.proof_image_url = preview
+      body.proof_image_url = preview
       await createPayment(body, token)
       setMessage('Comprobante enviado. Tu pago está siendo revisado.')
       setTimeout(onDone, 1500)
@@ -84,23 +88,7 @@ export default function Checkout({ order, token, onDone, onBack }) {
 
           <section className="card payment-card">
             <h3>Método de pago</h3>
-            <div className="method-options" role="radiogroup" aria-label="Método de pago">
-              {METHODS.map((m) => (
-                <label key={m.key} className={`method-option ${method === m.key ? 'selected' : ''}`}>
-                  <input
-                    type="radio"
-                    name="payment-method"
-                    value={m.key}
-                    checked={method === m.key}
-                    onChange={() => setMethod(m.key)}
-                  />
-                  <span>{m.label}</span>
-                </label>
-              ))}
-            </div>
-
-            {method === 'YAPE' ? (
-              <div className="yape-section">
+            <div className="yape-section">
                 <div className="qr-placeholder">
                   <span>QR Yape</span>
                 </div>
@@ -117,6 +105,12 @@ export default function Checkout({ order, token, onDone, onBack }) {
                   <p className="checkout-label">Comprobante</p>
                   {error && <p className="error">{error}</p>}
 
+                  {uploading ? (
+                    <p className="upload-status">Cargando comprobante...</p>
+                  ) : preview ? (
+                    <p className="upload-status success">Comprobante subido</p>
+                  ) : null}
+
                   <label className="file-label">
                     {preview ? 'Cambiar comprobante' : 'Subir comprobante'}
                     <input
@@ -128,17 +122,25 @@ export default function Checkout({ order, token, onDone, onBack }) {
                   </label>
 
                   {preview && (
-                    <div className="proof-preview">
-                      <img src={preview} alt="Comprobante" />
+                    <button className="btn small secondary" onClick={() => setViewProof(true)}>
+                      Ver comprobante
+                    </button>
+                  )}
+
+                  {viewProof && (
+                    <div className="proof-overlay" onClick={() => setViewProof(false)}>
+                      <div className="proof-modal" onClick={(e) => e.stopPropagation()}>
+                        <img src={preview} alt="Comprobante" />
+                        <button className="btn small" onClick={() => setViewProof(false)}>
+                          Cerrar
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
-            ) : (
-              <p className="empty small">Pronto estará disponible el pago con {method === 'CARD' ? 'tarjeta' : 'efectivo'}.</p>
-            )}
 
-            <button className="btn full" onClick={submit} disabled={loading}>
+            <button className="btn full" onClick={submit} disabled={loading || uploading || !preview}>
               {loading ? 'Procesando...' : 'Confirmar pago'}
             </button>
           </section>

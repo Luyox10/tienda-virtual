@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" role="img" aria-label="Plato principal de Sabor Delicioso">
+  <rect width="400" height="300" fill="#fff7ed" rx="20"/>
+  <circle cx="200" cy="150" r="90" fill="#fed7aa" stroke="#f97316" stroke-width="5" opacity="0.7"/>
+  <rect x="130" y="115" width="140" height="70" rx="16" fill="#fde68a" stroke="#d97706" stroke-width="3"/>
+  <circle cx="170" cy="140" r="18" fill="#f97316"/>
+  <circle cx="210" cy="145" r="14" fill="#22c55e"/>
+  <circle cx="245" cy="140" r="16" fill="#ef4444"/>
+  <text x="200" y="245" font-family="sans-serif" font-size="22" font-weight="700" text-anchor="middle" fill="#c2410c">Sabor Delicioso</text>
+  <text x="200" y="270" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#9ca3af">Frescura en cada bocado</text>
+</svg>

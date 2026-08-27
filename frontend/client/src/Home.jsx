@@ -46,11 +46,7 @@ export default function Home({ products, current, onAdd, setView }) {
         </div>
 
         <div className="hero-image" aria-hidden="true">
-          {sample[0] ? (
-            <img src={productImage(sample[0])} alt={sample[0].name} />
-          ) : (
-            <div className="hero-placeholder">🍽️</div>
-          )}
+          <img src="/imagenes/hero-home.svg" alt="Sabor Delicioso" className="hero-img" />
         </div>
       </section>
 

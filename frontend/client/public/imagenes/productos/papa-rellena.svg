@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200" role="img" aria-label="Papa rellena">
+  <rect width="300" height="200" fill="#f8fafc"/>
+  <rect x="75" y="55" width="150" height="130" rx="40" fill="#fde68a" stroke="#d97706" stroke-width="4"/>
+  <circle cx="150" cy="105" r="35" fill="#f97316" opacity="0.8"/>
+  <circle cx="125" cy="90" r="12" fill="#22c55e"/>
+  <circle cx="175" cy="100" r="10" fill="#ef4444"/>
+  <circle cx="140" cy="120" r="8" fill="#fff"/>
+  <text x="150" y="165" font-family="sans-serif" font-size="18" font-weight="600" text-anchor="middle" fill="#78350f">Papa rellena</text>
+  <text x="150" y="45" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#9ca3af">Ilustración de referencia</text>
+</svg>

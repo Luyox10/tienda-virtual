@@ -5,19 +5,15 @@ import Loading from './Loading'
 import Empty from './Empty'
 
 const FILTERS = [
-  { key: 'all', label: 'Todos' },
-  { key: 'PENDING_PAYMENT', label: 'Pendientes' },
-  { key: 'PAYMENT_REVIEW', label: 'En preparación' },
-  { key: 'ACCEPTED', label: 'Aceptados' },
-  { key: 'COMPLETED', label: 'Entregados' },
-  { key: 'CANCELLED', label: 'Cancelados' },
-  { key: 'REJECTED', label: 'Rechazados' },
+  { key: 'PENDING_PAYMENT', label: 'Enviado' },
+  { key: 'PAYMENT_REVIEW', label: 'Pendiente' },
+  { key: 'ACCEPTED', label: 'Aceptado' },
 ]
 
 export default function Orders({ token, onBack, onPay }) {
   const [orders, setOrders] = useState([])
   const [selected, setSelected] = useState(null)
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState('PENDING_PAYMENT')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -37,6 +33,8 @@ export default function Orders({ token, onBack, onPay }) {
 
   useEffect(() => {
     loadOrders()
+    const interval = setInterval(loadOrders, 10000)
+    return () => clearInterval(interval)
   }, [loadOrders])
 
   const viewDetail = (id) => {
@@ -55,14 +53,10 @@ export default function Orders({ token, onBack, onPay }) {
   const goBack = () => setSelected(null)
 
   const filtered = useMemo(() => {
-    if (filter === 'all') return orders
     return orders.filter((o) => o.status === filter)
   }, [orders, filter])
 
-  const emptyMessage =
-    filter === 'all'
-      ? 'No tienes pedidos todavía.'
-      : `No tienes pedidos ${FILTERS.find((f) => f.key === filter)?.label.toLowerCase()}.`
+  const emptyMessage = `No tienes pedidos ${FILTERS.find((f) => f.key === filter)?.label.toLowerCase()}.`
 
   return (
     <main className="page orders-page">
@@ -127,8 +121,11 @@ export default function Orders({ token, onBack, onPay }) {
                         Pagar
                       </button>
                     )}
-                    <button className="btn small secondary" onClick={() => viewDetail(o.id)}>
-                      Ver detalle
+                    <button
+                      className={`btn small ${o.status === 'ACCEPTED' ? 'accepted-detail' : 'secondary'}`}
+                      onClick={() => viewDetail(o.id)}
+                    >
+                      {o.status === 'ACCEPTED' ? '✓ Ver detalle' : 'Ver detalle'}
                     </button>
                   </div>
                 </li>

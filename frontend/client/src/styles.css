@@ -1807,3 +1807,65 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
 .help-section h4 { margin: 0 0 0.5rem; }
 .help-section p { color: var(--muted); margin: 0 0 1rem; }
 
+.recomendation {
+  padding: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.recomendation-text {
+  color: var(--text);
+  margin: 0 0 1rem;
+}
+
+.hero-img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: var(--radius);
+}
+
+.accepted-detail {
+  background: var(--secondary);
+  color: #fff;
+}
+
+.upload-status {
+  color: var(--muted);
+  margin: 0.5rem 0;
+}
+
+.upload-status.success {
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+.proof-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+}
+
+.proof-modal {
+  background: #fff;
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+}
+
+.proof-modal img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+

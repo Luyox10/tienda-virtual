@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200" role="img" aria-label="Causa de pollo">
+  <rect width="300" height="200" fill="#f8fafc"/>
+  <rect x="40" y="60" width="220" height="120" rx="20" fill="#fde68a" stroke="#f59e0b" stroke-width="4"/>
+  <circle cx="110" cy="100" r="25" fill="#f97316"/>
+  <circle cx="150" cy="100" r="25" fill="#22c55e"/>
+  <circle cx="190" cy="100" r="25" fill="#ef4444"/>
+  <text x="150" y="170" font-family="sans-serif" font-size="18" font-weight="600" text-anchor="middle" fill="#78350f">Causa de pollo</text>
+  <text x="150" y="50" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#9ca3af">Ilustración de referencia</text>
+</svg>

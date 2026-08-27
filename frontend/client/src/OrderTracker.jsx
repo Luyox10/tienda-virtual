@@ -107,6 +107,17 @@ export default function OrderTracker({ order, token, onBack }) {
         </ul>
       </div>
 
+      {status === 'ACCEPTED' && (
+        <div className="card recomendation">
+          <p className="recomendation-text">
+            Para una mejor entrega del producto, comunícate por WhatsApp con nosotros.
+          </p>
+          <a className="btn whatsapp" href={whatsappUrl} target="_blank" rel="noreferrer">
+            💬 Escribir por WhatsApp
+          </a>
+        </div>
+      )}
+
       <div className="card help-section">
         <h4>¿Necesitas ayuda?</h4>
         <p>Puedes contactar al administrador para consultar el estado de tu pedido.</p>

@@ -1857,14 +1857,16 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
 .proof-modal {
   background: #fff;
   border-radius: var(--radius-sm);
-  padding: 1rem;
-  max-width: 320px;
-  width: 100%;
+  padding: 1.25rem;
+  max-width: 720px;
+  width: 90vw;
   text-align: center;
 }
 
 .proof-modal img {
-  width: 100%;
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
   border-radius: 8px;
   margin-bottom: 1rem;
 }

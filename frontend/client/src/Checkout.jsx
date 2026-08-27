@@ -72,6 +72,65 @@ export default function Checkout({ order, token, onDone, onBack }) {
         </div>
       ) : (
         <div className="checkout-grid">
+          <section className="card payment-card">
+            <h3>Método de pago</h3>
+            <div className="yape-section">
+              <div className="qr-placeholder">
+                <span>QR Yape</span>
+              </div>
+              <p className="checkout-label">Número Yape</p>
+              <p className="checkout-value">{YAPE_NUMBER}</p>
+              <ol className="checkout-steps">
+                <li>Abre Yape</li>
+                <li>Escanea el QR</li>
+                <li>Realiza el pago por S/ {order.total}</li>
+                <li>Envía el comprobante</li>
+              </ol>
+
+              <div className="proof-section">
+                <p className="checkout-label">Comprobante</p>
+                {error && <p className="error">{error}</p>}
+
+                {uploading ? (
+                  <p className="upload-status">Cargando comprobante...</p>
+                ) : preview ? (
+                  <p className="upload-status success">Comprobante subido</p>
+                ) : null}
+
+                <label className="file-label">
+                  {preview ? 'Cambiar comprobante' : 'Subir comprobante'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFile}
+                    className="file-input"
+                  />
+                </label>
+
+                {preview && (
+                  <button className="btn small secondary" onClick={() => setViewProof(true)}>
+                    Ver comprobante
+                  </button>
+                )}
+
+                {viewProof && (
+                  <div className="proof-overlay" onClick={() => setViewProof(false)}>
+                    <div className="proof-modal" onClick={(e) => e.stopPropagation()}>
+                      <img src={preview} alt="Comprobante" />
+                      <button className="btn small" onClick={() => setViewProof(false)}>
+                        Cerrar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <button className="btn full" onClick={submit} disabled={loading || uploading || !preview}>
+              {loading ? 'Procesando...' : 'Confirmar pago'}
+            </button>
+          </section>
+
           <section className="card order-confirm">
             <h3>Pedido #{order.id}</h3>
             <p className="checkout-label">Total a pagar</p>
@@ -84,65 +143,6 @@ export default function Checkout({ order, token, onDone, onBack }) {
                 </li>
               ))}
             </ul>
-          </section>
-
-          <section className="card payment-card">
-            <h3>Método de pago</h3>
-            <div className="yape-section">
-                <div className="qr-placeholder">
-                  <span>QR Yape</span>
-                </div>
-                <p className="checkout-label">Número Yape</p>
-                <p className="checkout-value">{YAPE_NUMBER}</p>
-                <ol className="checkout-steps">
-                  <li>Abre Yape</li>
-                  <li>Escanea el QR</li>
-                  <li>Realiza el pago por S/ {order.total}</li>
-                  <li>Envía el comprobante</li>
-                </ol>
-
-                <div className="proof-section">
-                  <p className="checkout-label">Comprobante</p>
-                  {error && <p className="error">{error}</p>}
-
-                  {uploading ? (
-                    <p className="upload-status">Cargando comprobante...</p>
-                  ) : preview ? (
-                    <p className="upload-status success">Comprobante subido</p>
-                  ) : null}
-
-                  <label className="file-label">
-                    {preview ? 'Cambiar comprobante' : 'Subir comprobante'}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFile}
-                      className="file-input"
-                    />
-                  </label>
-
-                  {preview && (
-                    <button className="btn small secondary" onClick={() => setViewProof(true)}>
-                      Ver comprobante
-                    </button>
-                  )}
-
-                  {viewProof && (
-                    <div className="proof-overlay" onClick={() => setViewProof(false)}>
-                      <div className="proof-modal" onClick={(e) => e.stopPropagation()}>
-                        <img src={preview} alt="Comprobante" />
-                        <button className="btn small" onClick={() => setViewProof(false)}>
-                          Cerrar
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-            <button className="btn full" onClick={submit} disabled={loading || uploading || !preview}>
-              {loading ? 'Procesando...' : 'Confirmar pago'}
-            </button>
           </section>
         </div>
       )}

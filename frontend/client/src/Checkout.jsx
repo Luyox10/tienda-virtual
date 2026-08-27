@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { createPayment } from './services/api'
 import { YAPE_NUMBER } from './config'
 
@@ -113,16 +114,18 @@ export default function Checkout({ order, token, onDone, onBack }) {
                   </button>
                 )}
 
-                {viewProof && (
-                  <div className="proof-overlay" onClick={() => setViewProof(false)}>
-                    <div className="proof-modal" onClick={(e) => e.stopPropagation()}>
-                      <img src={preview} alt="Comprobante" />
-                      <button className="btn small" onClick={() => setViewProof(false)}>
-                        Cerrar
-                      </button>
-                    </div>
-                  </div>
-                )}
+                {viewProof &&
+                  createPortal(
+                    <div className="proof-overlay" onClick={() => setViewProof(false)}>
+                      <div className="proof-modal" onClick={(e) => e.stopPropagation()}>
+                        <img src={preview} alt="Comprobante" />
+                        <button className="btn small" onClick={() => setViewProof(false)}>
+                          Cerrar
+                        </button>
+                      </div>
+                    </div>,
+                    document.body
+                  )}
               </div>
             </div>
 

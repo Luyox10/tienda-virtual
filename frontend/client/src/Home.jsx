@@ -1,5 +1,22 @@
 import { productImage } from './productImage'
 
+function ProductCard({ p, onSelect }) {
+  const src = productImage(p)
+  return (
+    <div className="card home-product-card" onClick={() => onSelect(p)} role="button" tabIndex={0}>
+      {src ? (
+        <img src={src} alt={p.name} className="home-product-img" />
+      ) : (
+        <div className="home-product-img placeholder">Sin imagen</div>
+      )}
+      <div className="home-product-info">
+        <strong>{p.name}</strong>
+        <p className="home-product-price">S/ {Number(p.price).toFixed(2)}</p>
+      </div>
+    </div>
+  )
+}
+
 const benefits = [
   { icon: '🚚', title: 'Entrega rápida', desc: 'Recibe tu pedido sin demoras' },
   { icon: '✓', title: 'Ingredientes frescos', desc: 'Calidad garantizada' },
@@ -49,6 +66,22 @@ export default function Home({ products, current, onAdd, setView }) {
           <img src="/imagenes/hero-home.svg" alt="Sabor Delicioso" className="hero-img" />
         </div>
       </section>
+
+      {sample.length > 0 && (
+        <section className="home-products" aria-labelledby="home-products-title">
+          <h2 id="home-products-title" className="section-title center">Productos destacados</h2>
+          <div className="home-products-grid">
+            {sample.map((p) => (
+              <ProductCard key={p.id} p={p} onSelect={() => onAdd(p, 1)} />
+            ))}
+          </div>
+          <div className="home-products-actions">
+            <button className="btn" onClick={() => setView('products')}>
+              Ver todos los productos
+            </button>
+          </div>
+        </section>
+      )}
 
       <section className="benefits" aria-labelledby="benefits-title">
         <h2 id="benefits-title" className="section-title center">¿Por qué elegirnos?</h2>

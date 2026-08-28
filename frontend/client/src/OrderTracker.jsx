@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getOrder } from './services/ordersService'
+import { productImage } from './productImage'
 import { WHATSAPP_NUMBER } from './config'
 
 const STEPS = [
@@ -100,12 +101,23 @@ export default function OrderTracker({ order, token, onBack }) {
 
       <div className="card tracker-products">
         <h4>Productos</h4>
-        <ul>
-          {live.items?.map((i) => (
-            <li key={i.id}>
-              {i.product_name} x {i.quantity} — S/ {Number(i.subtotal).toFixed(2)}
-            </li>
-          ))}
+        <ul className="tracker-product-list">
+          {live.items?.map((i) => {
+            const src = productImage(i)
+            return (
+              <li key={i.id} className="tracker-product-item">
+                {src ? (
+                  <img src={src} alt={i.product_name} className="tracker-product-img" />
+                ) : (
+                  <div className="tracker-product-img placeholder">Sin imagen</div>
+                )}
+                <div className="tracker-product-info">
+                  <strong>{i.product_name}</strong>
+                  <p>{i.quantity} x S/ {Number(i.unit_price).toFixed(2)} — S/ {Number(i.subtotal).toFixed(2)}</p>
+                </div>
+              </li>
+            )
+          })}
         </ul>
       </div>
 

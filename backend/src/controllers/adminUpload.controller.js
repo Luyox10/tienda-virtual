@@ -22,7 +22,8 @@ const upload = async (req, res) => {
     await fs.promises.mkdir(UPLOADS_DIR, { recursive: true });
     await fs.promises.writeFile(filePath, buffer);
 
-    const origin = `${req.protocol}://${req.get('host')}`;
+    const protocol = req.get('x-forwarded-proto') || req.protocol;
+    const origin = `${protocol}://${req.get('host')}`;
     res.json({ image_url: `${origin}/uploads/${filename}` });
   } catch (err) {
     res.status(400).json({ error: err.message });

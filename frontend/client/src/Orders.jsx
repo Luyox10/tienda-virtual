@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { getOrders, getOrder } from './services/ordersService'
+import { productImage } from './productImage'
 import OrderTracker from './OrderTracker'
 import Loading from './Loading'
 import Empty from './Empty'
@@ -109,7 +110,17 @@ export default function Orders({ token, onBack, onPay }) {
                     </span>
                   </div>
                   <div className="order-detail-row">
+                    {productImage({ image_url: o.first_product_image, name: o.first_product_name }) ? (
+                      <img
+                        src={productImage({ image_url: o.first_product_image, name: o.first_product_name })}
+                        alt={o.first_product_name || 'Producto'}
+                        className="order-thumb"
+                      />
+                    ) : (
+                      <div className="order-thumb placeholder">Sin imagen</div>
+                    )}
                     <div>
+                      <p className="order-product-name">{o.first_product_name || 'Pedido #' + o.id}</p>
                       <p className="order-date">{new Date(o.created_at).toLocaleString('es-PE')}</p>
                       <p className="order-shift">Turno: {o.shift_name || '-'}</p>
                     </div>

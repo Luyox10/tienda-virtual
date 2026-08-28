@@ -4,29 +4,39 @@ const shiftService = require('./shiftService');
 const availabilityService = require('./availabilityService');
 
 const list = async (userId, role) => {
-  let query = 'SELECT * FROM orders';
+  let query =
+    'SELECT o.*, s.name AS shift_name, ' +
+    '(SELECT p.image_url FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = o.id ORDER BY oi.id LIMIT 1) AS first_product_image, ' +
+    '(SELECT p.name FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = o.id ORDER BY oi.id LIMIT 1) AS first_product_name ' +
+    'FROM orders o LEFT JOIN shifts s ON o.shift_id = s.id';
   const params = [];
   if (role !== 'admin') {
-    query += ' WHERE user_id = ?';
+    query += ' WHERE o.user_id = ?';
     params.push(userId);
   }
-  query += ' ORDER BY id DESC';
+  query += ' ORDER BY o.id DESC';
   const [rows] = await db.execute(query, params);
   return rows;
 };
 
 const getById = async (orderId, userId, role) => {
-  let query = 'SELECT * FROM orders WHERE id = ?';
+  let query =
+    'SELECT o.*, s.name AS shift_name ' +
+    'FROM orders o LEFT JOIN shifts s ON o.shift_id = s.id ' +
+    'WHERE o.id = ?';
   const params = [orderId];
   if (role !== 'admin') {
-    query += ' AND user_id = ?';
+    query += ' AND o.user_id = ?';
     params.push(userId);
   }
   const [orders] = await db.execute(query, params);
   if (orders.length === 0) return null;
   const order = orders[0];
   const [items] = await db.execute(
-    'SELECT id, product_id, product_name, quantity, unit_price, subtotal, created_at FROM order_items WHERE order_id = ?',
+    'SELECT oi.id, oi.product_id, oi.product_name, oi.quantity, oi.unit_price, oi.subtotal, oi.created_at, p.image_url ' +
+    'FROM order_items oi ' +
+    'JOIN products p ON oi.product_id = p.id ' +
+    'WHERE oi.order_id = ?',
     [orderId]
   );
   order.items = items;

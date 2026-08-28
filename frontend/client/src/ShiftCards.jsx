@@ -3,12 +3,10 @@ export default function ShiftCards({ shifts, current }) {
   const isCurrentOpen = current?.current?.is_open
 
   const statusFor = (shift) => {
-    if (shift.id === currentId) {
-      return isCurrentOpen
-        ? { text: 'Disponible', class: 'accepted' }
-        : { text: 'Cerrado', class: 'sold-out' }
+    if (shift.is_open) {
+      return { text: 'Disponible', class: 'accepted' }
     }
-    if (!shift.is_enabled) {
+    if (!shift.is_enabled && shift.manual_override === null) {
       return { text: 'No habilitado', class: 'sold-out' }
     }
     return { text: 'Cerrado', class: 'sold-out' }

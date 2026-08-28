@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { getPayments, approvePayment, rejectPayment } from '../api'
 import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
@@ -12,6 +13,7 @@ export default function Payments({ token }) {
   const [message, setMessage] = useState(null)
   const [reason, setReason] = useState({})
   const [rejectModal, setRejectModal] = useState(null)
+  const [viewProof, setViewProof] = useState(null)
 
   const load = () => {
     setLoading(true)
@@ -75,9 +77,9 @@ export default function Payments({ token }) {
                 <td><StatusBadge status={p.status} /></td>
                 <td>
                   {p.voucher_url ? (
-                    <a href={p.voucher_url} target="_blank" rel="noreferrer" className="btn small secondary">
+                    <button className="btn small secondary" onClick={() => setViewProof(p.voucher_url)}>
                       Ver comprobante
-                    </a>
+                    </button>
                   ) : (
                     '—'
                   )}
@@ -131,6 +133,19 @@ export default function Payments({ token }) {
           </div>
         </Modal>
       )}
+
+      {viewProof &&
+        createPortal(
+          <div className="proof-overlay" onClick={() => setViewProof(null)}>
+            <div className="proof-modal" onClick={(e) => e.stopPropagation()}>
+              <img src={viewProof} alt="Comprobante" />
+              <button className="btn small" onClick={() => setViewProof(null)}>
+                Cerrar
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

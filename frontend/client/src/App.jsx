@@ -136,7 +136,7 @@ function App() {
     }
 
     if (view === 'products') {
-      return <ProductsPage products={products} current={current} onAdd={addToCart} />
+      return <ProductsPage products={products} shifts={shifts} current={current} onAdd={addToCart} />
     }
 
     if (view === 'contact') {

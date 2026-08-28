@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getProducts, getShifts, createProduct, updateProduct } from '../api'
+import { getProducts, getShifts, createProduct, updateProduct, deleteProduct, uploadImage } from '../api'
 import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
@@ -22,6 +22,9 @@ export default function Products({ token }) {
     shift_id: '',
     is_active: true,
   })
+  const [uploading, setUploading] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(null)
+  const [shiftFilter, setShiftFilter] = useState('all')
 
   const load = () => {
     setLoading(true)
@@ -41,6 +44,24 @@ export default function Products({ token }) {
 
   const reset = () => {
     setForm({ id: null, name: '', description: '', price: '', image_url: '', shift_id: '', is_active: true })
+  }
+
+  const handleImage = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setUploading(true)
+    const reader = new FileReader()
+    reader.onload = async () => {
+      try {
+        const data = await uploadImage(reader.result, token)
+        setForm((prev) => ({ ...prev, image_url: data.image_url }))
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setUploading(false)
+      }
+    }
+    reader.readAsDataURL(file)
   }
 
   const handleSubmit = async (e) => {
@@ -93,6 +114,9 @@ export default function Products({ token }) {
   }
 
   const shiftName = (id) => shifts.find((s) => s.id === Number(id))?.name || '-'
+  const visibleProducts = shiftFilter === 'all'
+    ? products
+    : products.filter((p) => p.shift_id === Number(shiftFilter))
 
   if (loading) return <p className="loading-message">Cargando productos...</p>
 
@@ -134,11 +158,16 @@ export default function Products({ token }) {
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
+          {form.image_url && (
+            <img src={productImage(form)} alt="Vista previa" className="product-thumb-preview" />
+          )}
           <input
-            value={form.image_url}
-            onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-            placeholder="URL o ruta de imagen"
+            type="file"
+            accept="image/*"
+            onChange={handleImage}
+            disabled={uploading}
           />
+          {uploading && <p className="loading-message">Subiendo imagen...</p>}
           <label className="form-check">
             <input
               type="checkbox"
@@ -161,14 +190,26 @@ export default function Products({ token }) {
       </section>
 
       <section className="dashboard-section">
-        <h2 className="section-title">Lista de productos</h2>
+        <div className="products-list-header">
+          <h2 className="section-title">Lista de productos</h2>
+          <select
+            value={shiftFilter}
+            onChange={(e) => setShiftFilter(e.target.value)}
+            className="small-input"
+          >
+            <option value="all">Todos los turnos</option>
+            {shifts.map((s) => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
+        </div>
         <DataTable headers={['Imagen', 'Nombre', 'Precio', 'Turno', 'Estado', 'Acciones']}>
-          {products.length === 0 ? (
+          {visibleProducts.length === 0 ? (
             <tr>
               <td colSpan="6" className="empty-cell">No hay productos registrados.</td>
             </tr>
           ) : (
-            products.map((p) => (
+            visibleProducts.map((p) => (
               <tr key={p.id}>
                 <td>
                   <img src={productImage(p)} alt={p.name} className="product-thumb" />
@@ -190,6 +231,9 @@ export default function Products({ token }) {
                   >
                     {p.is_active ? 'Desactivar' : 'Activar'}
                   </button>
+                  <button className="btn small danger" onClick={() => setDeleteConfirm(p)}>
+                    Borrar
+                  </button>
                 </td>
               </tr>
             ))
@@ -205,6 +249,28 @@ export default function Products({ token }) {
           confirmText="Confirmar"
         >
           Esta acción cambiará la visibilidad del producto en la tienda.
+        </Modal>
+      )}
+
+      {deleteConfirm && (
+        <Modal
+          title={`¿Borrar "${deleteConfirm.name}"?`}
+          onClose={() => setDeleteConfirm(null)}
+          onConfirm={async () => {
+            try {
+              await deleteProduct(deleteConfirm.id, token)
+              setMessage('Producto eliminado')
+              setDeleteConfirm(null)
+              reset()
+              load()
+            } catch (err) {
+              setError(err.message)
+            }
+          }}
+          confirmText="Borrar"
+          confirmClass="btn danger"
+        >
+          Esta acción eliminará el producto definitivamente.
         </Modal>
       )}
     </div>

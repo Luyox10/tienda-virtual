@@ -18,4 +18,13 @@ const update = async (req, res) => {
   }
 };
 
-module.exports = { create, update };
+const remove = async (req, res) => {
+  try {
+    await productService.remove(req.params.id);
+    res.json({ id: req.params.id });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+module.exports = { create, update, remove };

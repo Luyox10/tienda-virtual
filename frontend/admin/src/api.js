@@ -62,10 +62,23 @@ async function authGetJson(path, token) {
   return res.json();
 }
 
+async function authDeleteJson(path, token) {
+  const res = await fetch(API_URL + path, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(friendlyError(res.status, data.error));
+  return data;
+}
+
 export const login = (body) => postJson('/auth/login', body);
 export const getProducts = () => getJson('/products');
 export const getShifts = () => getJson('/shifts');
 export const getUsers = (token) => authGetJson('/users', token);
+export const deleteUser = (id, token) => authDeleteJson(`/users/${id}`, token);
+export const deleteProduct = (id, token) => authDeleteJson(`/admin/products/${id}`, token);
+export const uploadImage = (base64, token) => authPostJson('/admin/upload', { image: base64 }, token);
 export const getDashboard = (token) => authGetJson('/admin/dashboard', token);
 export const createProduct = (body, token) => authPostJson('/admin/products', body, token);
 export const updateProduct = (id, body, token) => authPatchJson(`/admin/products/${id}`, body, token);

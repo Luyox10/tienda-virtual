@@ -171,43 +171,27 @@ export default function Orders({ token }) {
                   ))}
                 </div>
 
-                {selected.payment && (
-                  <div className="payment-box">
-                    <h4 className="detail-subtitle">Pago Yape</h4>
-                    <p className="detail-label">Método</p>
-                    <p className="detail-value">{selected.payment.method}</p>
-                    <p className="detail-label">Monto</p>
-                    <p className="detail-value">S/ {selected.payment.amount}</p>
-                    <p className="detail-label">Estado</p>
-                    <p><StatusBadge status={selected.payment.status} /></p>
-
-                    {selected.payment.voucher_url && (
-                      <div className="payment-proof">
-                        <p className="detail-label">Comprobante</p>
-                        <img src={selected.payment.voucher_url} alt="Comprobante" />
-                      </div>
-                    )}
-
-                    {selected.payment.status === 'PENDING' && (
-                      <div className="payment-actions">
-                        <button className="btn" onClick={() => handleApprove(selected.payment.id)}>
-                          Aprobar pago
-                        </button>
-                        <div className="reject-group">
-                          <input
-                            type="text"
-                            placeholder="Motivo del rechazo"
-                            value={rejectReason}
-                            onChange={(e) => setRejectReason(e.target.value)}
-                          />
-                          <button className="btn secondary" onClick={() => handleReject(selected.payment.id)}>
-                            Rechazar pago
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                <div className="payment-box">
+                  <h4 className="detail-subtitle">Pago Yape</h4>
+                  <div className="order-detail-grid">
+                    <div>
+                      <p className="detail-label">Método</p>
+                      <p className="detail-value">{selected.payment?.method || 'YAPE'}</p>
+                    </div>
+                    <div>
+                      <p className="detail-label">Monto</p>
+                      <p className="detail-value">S/ {selected.total}</p>
+                    </div>
+                    <div>
+                      <p className="detail-label">Estado del pedido</p>
+                      <p><StatusBadge status={selected.status} /></p>
+                    </div>
+                    <div>
+                      <p className="detail-label">Estado del pago</p>
+                      <p><StatusBadge status={selected.payment?.status || 'PENDING'} /></p>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>,
             document.body

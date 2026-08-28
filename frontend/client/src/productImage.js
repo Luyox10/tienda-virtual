@@ -7,7 +7,7 @@ export function productImage(p) {
     return clean
   }
   const name = p.name?.toLowerCase() || ''
-  if (name.includes('causa')) return `${IMAGES_PREFIX}causa-pollo.svg`
-  if (name.includes('papa')) return `${IMAGES_PREFIX}papa-rellena.svg`
+  if (name.includes('causa')) return `${IMAGES_PREFIX}causa-pollo.jpg`
+  if (name.includes('papa')) return `${IMAGES_PREFIX}papa-rellena.jpg`
   return ''
 }

@@ -41,10 +41,6 @@ export default function Sidebar({ active, onNavigate, onLogout, isOpen, onToggle
 
         <div className="sidebar-section">CONFIGURACIÓN</div>
         <nav className="sidebar-nav">
-          <button className="sidebar-item" onClick={() => onNavigate('settings')} aria-label="Ajustes">
-            <span className="sidebar-icon" aria-hidden="true">⚙️</span>
-            <span>Ajustes</span>
-          </button>
           <button className="sidebar-item" onClick={onLogout} aria-label="Cerrar sesión">
             <span className="sidebar-icon" aria-hidden="true">↪</span>
             <span>Cerrar sesión</span>

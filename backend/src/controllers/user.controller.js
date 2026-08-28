@@ -9,4 +9,13 @@ const list = async (req, res) => {
   }
 };
 
-module.exports = { list };
+const remove = async (req, res) => {
+  try {
+    await userService.remove(req.params.id);
+    res.json({ id: req.params.id });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+module.exports = { list, remove };

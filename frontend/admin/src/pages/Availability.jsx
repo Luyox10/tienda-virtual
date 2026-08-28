@@ -35,7 +35,17 @@ export default function Availability({ token }) {
     load()
   }, [])
 
+  const shiftOpen = (s) => s.is_open
+
+  const productStatus = (p) => {
+    const s = shifts.find((x) => x.id === p.shift_id)
+    if (!s || !shiftOpen(s) || !p.is_active) return 'sold_out'
+    return availability[p.id] === 'sold_out' ? 'sold_out' : 'available'
+  }
+
   const toggle = async (product) => {
+    const s = shifts.find((x) => x.id === product.shift_id)
+    if (!s || !shiftOpen(s) || !product.is_active) return
     const next = availability[product.id] === 'available' ? 'sold_out' : 'available'
     try {
       await setProductAvailability(product.id, { date, status: next }, token)
@@ -77,18 +87,30 @@ export default function Availability({ token }) {
               <p className="empty-cell">No hay productos para este turno.</p>
             ) : (
               <ul className="availability-list">
-                {s.products.map((p) => (
-                  <li key={p.id} className="availability-item">
-                    <img src={productImage(p)} alt={p.name} className="product-thumb" />
-                    <div className="availability-info">
-                      <strong>{p.name}</strong>
-                      <StatusBadge status={availability[p.id]} />
-                    </div>
-                    <button className="btn small" onClick={() => toggle(p)}>
-                      {availability[p.id] === 'available' ? 'Marcar agotado' : 'Marcar disponible'}
-                    </button>
-                  </li>
-                ))}
+                {s.products.map((p) => {
+                  const status = productStatus(p)
+                  const canToggle = shiftOpen(s) && p.is_active
+                  return (
+                    <li key={p.id} className="availability-item">
+                      <img src={productImage(p)} alt={p.name} className="product-thumb" />
+                      <div className="availability-info">
+                        <strong>{p.name}</strong>
+                        <StatusBadge status={status} />
+                      </div>
+                      <button
+                        className="btn small"
+                        onClick={() => toggle(p)}
+                        disabled={!canToggle}
+                      >
+                        {!canToggle
+                          ? 'No disponible'
+                          : status === 'available'
+                            ? 'Marcar agotado'
+                            : 'Marcar disponible'}
+                      </button>
+                    </li>
+                  )
+                })}
               </ul>
             )}
           </div>

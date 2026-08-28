@@ -1,14 +1,19 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import ProductModal from './ProductModal'
 import { productImage } from './productImage'
 
-export default function ProductList({ products, current, onAdd }) {
+export default function ProductList({ products, shifts, current, onAdd }) {
   const [selected, setSelected] = useState(null)
   const [justAdded, setJustAdded] = useState(null)
 
+  const openShiftIds = useMemo(
+    () => new Set((shifts || []).filter((s) => s.is_open).map((s) => s.id)),
+    [shifts]
+  )
+
   const currentShiftId = current?.current?.id
-  const isOpen = current?.current?.is_open
-  const isAvailable = (p) => p.is_active && p.shift_id === currentShiftId && isOpen
+  const currentOpen = current?.current?.is_open
+  const isAvailable = (p) => p.is_active && openShiftIds.has(p.shift_id)
 
   const handleAdd = (product, quantity) => {
     onAdd(product, quantity)

@@ -1450,3 +1450,58 @@ select {
   margin-top: 1rem;
 }
 
+.proof-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.proof-modal {
+  background: #fff;
+  border-radius: var(--admin-radius);
+  padding: 1.25rem;
+  max-width: 720px;
+  width: 90vw;
+  text-align: center;
+}
+
+.proof-modal img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.products-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.product-thumb-preview {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  margin: 0.5rem 0;
+}
+
+.user-detail p {
+  margin: 0.5rem 0;
+  color: var(--admin-text);
+}
+
+.user-detail strong {
+  color: var(--admin-heading);
+}
+

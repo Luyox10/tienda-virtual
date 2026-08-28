@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import ProductList from './ProductList'
 
-export default function ProductsPage({ products, current, onAdd }) {
+export default function ProductsPage({ products, shifts, current, onAdd }) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('Todos')
 
@@ -69,7 +69,7 @@ export default function ProductsPage({ products, current, onAdd }) {
         )}
       </section>
 
-      <ProductList products={filtered} current={current} onAdd={onAdd} />
+      <ProductList products={filtered} shifts={shifts} current={current} onAdd={onAdd} />
     </main>
   )
 }

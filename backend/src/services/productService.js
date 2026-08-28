@@ -44,4 +44,10 @@ const update = async (id, fields) => {
   return getById(id);
 };
 
-module.exports = { list, getById, create, update };
+const remove = async (id) => {
+  const [result] = await db.execute('DELETE FROM products WHERE id = ?', [id]);
+  if (result.affectedRows === 0) throw new Error('Producto no encontrado');
+  return { id };
+};
+
+module.exports = { list, getById, create, update, remove };

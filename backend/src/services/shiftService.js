@@ -2,7 +2,10 @@ const db = require('../config/db');
 
 const list = async () => {
   const [rows] = await db.execute('SELECT * FROM shifts ORDER BY id');
-  return rows;
+  return rows.map((s) => ({
+    ...s,
+    is_open: s.manual_override !== null ? !!s.manual_override : !!s.is_enabled,
+  }));
 };
 
 const current = async () => {

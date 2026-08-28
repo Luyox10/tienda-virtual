@@ -30,4 +30,10 @@ const create = async ({ role_id, full_name, email, password_hash, phone }) => {
   return findById(result.insertId);
 };
 
-module.exports = { findByEmail, findById, list, create };
+const remove = async (id) => {
+  const [result] = await db.execute('DELETE FROM users WHERE id = ?', [id]);
+  if (result.affectedRows === 0) throw new Error('Usuario no encontrado');
+  return { id };
+};
+
+module.exports = { findByEmail, findById, list, create, remove };

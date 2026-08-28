@@ -88,6 +88,7 @@ export const updateShift = (id, body, token) => authPatchJson(`/admin/shifts/${i
 export const getOrders = (token) => authGetJson('/orders', token);
 export const getOrder = (id, token) => authGetJson(`/orders/${id}`, token);
 export const getPayments = (token) => authGetJson('/admin/payments', token);
+export const getPaidProducts = (token) => authGetJson('/admin/reports/paid-products', token);
 export const approvePayment = (id, token) => authPatchJson(`/admin/payments/${id}/approve`, {}, token);
 export const rejectPayment = (id, token, reason) =>
   authPatchJson(`/admin/payments/${id}/reject`, { rejection_reason: reason }, token);

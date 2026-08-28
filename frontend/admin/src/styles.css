@@ -1505,3 +1505,19 @@ select {
   color: var(--admin-heading);
 }
 
+.btn.success {
+  background: #22c55e;
+  color: #fff;
+}
+
+.btn.danger {
+  background: #ef4444;
+  color: #fff;
+}
+
+.report-total {
+  margin-left: auto;
+  font-size: 1rem;
+  color: var(--admin-heading);
+}
+

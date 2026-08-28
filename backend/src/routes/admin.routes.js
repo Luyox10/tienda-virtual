@@ -4,6 +4,7 @@ const { update: updateAvailability } = require('../controllers/availability.cont
 const { update: updateShift } = require('../controllers/shift.controller');
 const { list: listPayments, approve, reject } = require('../controllers/adminPayment.controller');
 const { get: getDashboard } = require('../controllers/dashboard.controller');
+const { paidProducts: getPaidProducts } = require('../controllers/adminReport.controller');
 const { upload: uploadImage } = require('../controllers/adminUpload.controller');
 const { verifyToken, requireRole } = require('../middlewares/auth.middleware');
 
@@ -17,6 +18,7 @@ router.delete('/products/:id', verifyToken, requireRole('admin'), removeProduct)
 router.patch('/products/:id/availability', verifyToken, requireRole('admin'), updateAvailability);
 router.patch('/shifts/:id', verifyToken, requireRole('admin'), updateShift);
 router.get('/payments', verifyToken, requireRole('admin'), listPayments);
+router.get('/reports/paid-products', verifyToken, requireRole('admin'), getPaidProducts);
 router.patch('/payments/:id/approve', verifyToken, requireRole('admin'), approve);
 router.patch('/payments/:id/reject', verifyToken, requireRole('admin'), reject);
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getShifts, updateShift } from '../api'
 import PageHeader from '../components/PageHeader'
-import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
 
 export default function Shifts({ token }) {
@@ -21,31 +20,14 @@ export default function Shifts({ token }) {
 
   useEffect(() => { load() }, [])
 
-  const nextOverride = (manualOverride) => {
-    if (manualOverride === null) return 0
-    if (manualOverride === 0) return 1
-    return null
-  }
-
-  const overrideLabel = (manualOverride) => {
-    if (manualOverride === null) return 'Automático'
-    if (manualOverride === 0) return 'Forzar cerrado'
-    return 'Forzar abierto'
-  }
-
-  const handleShift = async (s, field, value) => {
+  const handleShift = async (s, value) => {
     try {
-      await updateShift(s.id, { [field]: value }, token)
-      setMessage('Turno actualizado')
+      await updateShift(s.id, { is_enabled: value }, token)
+      setMessage(`Turno ${value ? 'habilitado' : 'deshabilitado'}`)
       load()
     } catch (err) {
       setError(err.message)
     }
-  }
-
-  const toggleOverride = (s) => {
-    const next = nextOverride(s.manual_override)
-    handleShift(s, 'manual_override', next)
   }
 
   if (loading) return <p className="loading-message">Cargando turnos...</p>
@@ -58,10 +40,10 @@ export default function Shifts({ token }) {
 
       <section className="dashboard-section">
         <h2 className="section-title">Turnos de hoy</h2>
-        <DataTable headers={['Turno', 'Horario', 'Habilitado', 'Override manual']}>
+        <DataTable headers={['Turno', 'Horario', 'Estado']}>
           {shifts.length === 0 ? (
             <tr>
-              <td colSpan="4" className="empty-cell">No hay turnos registrados.</td>
+              <td colSpan="3" className="empty-cell">No hay turnos registrados.</td>
             </tr>
           ) : (
             shifts.map((s) => (
@@ -70,18 +52,10 @@ export default function Shifts({ token }) {
                 <td>{s.start_time} - {s.end_time}</td>
                 <td>
                   <button
-                    className="btn small"
-                    onClick={() => handleShift(s, 'is_enabled', !s.is_enabled)}
+                    className={`btn small ${s.is_enabled ? 'success' : 'danger'}`}
+                    onClick={() => handleShift(s, !s.is_enabled)}
                   >
-                    {s.is_enabled ? 'Sí' : 'No'}
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn small"
-                    onClick={() => toggleOverride(s)}
-                  >
-                    {overrideLabel(s.manual_override)}
+                    {s.is_enabled ? 'Habilitado' : 'Deshabilitado'}
                   </button>
                 </td>
               </tr>
@@ -90,12 +64,7 @@ export default function Shifts({ token }) {
         </DataTable>
 
         <div className="shift-legend">
-          <p><strong>Estados de override:</strong></p>
-          <ul>
-            <li><StatusBadge status="active" /> <strong>Automático:</strong> el sistema decide si el turno está abierto.</li>
-            <li><StatusBadge status="rejected" /> <strong>Forzar cerrado:</strong> siempre aparece como cerrado.</li>
-            <li><StatusBadge status="accepted" /> <strong>Forzar abierto:</strong> siempre aparece como abierto.</li>
-          </ul>
+          <p>Haz clic en el estado del turno para cambiarlo entre habilitado y deshabilitado.</p>
         </div>
       </section>
     </div>

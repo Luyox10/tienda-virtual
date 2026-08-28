@@ -4,7 +4,6 @@ export default function Sidebar({ active, onNavigate, onLogout, isOpen, onToggle
     { key: 'orders', label: 'Pedidos', emoji: '🧾' },
     { key: 'products', label: 'Productos', emoji: '🍔' },
     { key: 'shifts', label: 'Turnos', emoji: '🕐' },
-    { key: 'availability', label: 'Disponibilidad', emoji: '✓' },
     { key: 'payments', label: 'Pagos', emoji: '💳' },
     { key: 'users', label: 'Usuarios', emoji: '👥' },
     { key: 'reports', label: 'Reportes', emoji: '📊' },

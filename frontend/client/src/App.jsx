@@ -35,17 +35,29 @@ function App() {
     localStorage.setItem('cart', JSON.stringify(cart))
   }, [cart])
 
-  useEffect(() => {
-    setLoading(true)
-    setError(null)
+  const loadData = (silent = false) => {
+    if (!silent) {
+      setLoading(true)
+      setError(null)
+    }
     Promise.all([getProducts(), getShifts(), getCurrentShift()])
       .then(([p, s, c]) => {
         setProducts(p)
         setShifts(s)
         setCurrent(c)
       })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false))
+      .catch((e) => {
+        if (!silent) setError(e.message)
+      })
+      .finally(() => {
+        if (!silent) setLoading(false)
+      })
+  }
+
+  useEffect(() => {
+    loadData()
+    const interval = setInterval(() => loadData(true), 5000)
+    return () => clearInterval(interval)
   }, [])
 
   const handleLogin = () => {
@@ -128,6 +140,7 @@ function App() {
       return (
         <Home
           products={products}
+          shifts={shifts}
           current={current}
           onAdd={addToCart}
           setView={setView}

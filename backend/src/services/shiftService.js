@@ -4,25 +4,24 @@ const list = async () => {
   const [rows] = await db.execute('SELECT * FROM shifts ORDER BY id');
   return rows.map((s) => ({
     ...s,
-    is_open: s.manual_override !== null ? !!s.manual_override : !!s.is_enabled,
+    is_open: !!s.is_enabled,
   }));
 };
 
 const current = async () => {
   const [rows] = await db.execute(
-    'SELECT id, name, start_time, end_time, is_enabled, manual_override ' +
+    'SELECT id, name, start_time, end_time, is_enabled ' +
     'FROM shifts WHERE start_time <= CURRENT_TIME AND end_time >= CURRENT_TIME'
   );
 
   if (rows.length === 0) return null;
 
   const shift = rows[0];
-  const is_open = shift.manual_override !== null ? shift.manual_override : shift.is_enabled;
-  shift.is_open = !!is_open;
+  shift.is_open = !!shift.is_enabled;
   return shift;
 };
 
-const update = async (id, { is_enabled, manual_override }) => {
+const update = async (id, { is_enabled }) => {
   const fields = [];
   const values = [];
 
@@ -31,18 +30,13 @@ const update = async (id, { is_enabled, manual_override }) => {
     values.push(is_enabled ? 1 : 0);
   }
 
-  if (manual_override !== undefined) {
-    fields.push('manual_override = ?');
-    values.push(manual_override === null ? null : (manual_override ? 1 : 0));
-  }
-
   if (fields.length === 0) throw new Error('Nada para actualizar');
 
   values.push(id);
   await db.execute(`UPDATE shifts SET ${fields.join(', ')} WHERE id = ?`, values);
 
   const [rows] = await db.execute('SELECT * FROM shifts WHERE id = ?', [id]);
-  return rows[0];
+  return { ...rows[0], is_open: !!rows[0].is_enabled };
 };
 
 module.exports = { list, current, update };

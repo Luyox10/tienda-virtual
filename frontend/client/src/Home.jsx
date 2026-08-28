@@ -1,14 +1,22 @@
 import { productImage } from './productImage'
 
-function ProductCard({ p, onSelect }) {
+function ProductCard({ p, inCurrent, onSelect }) {
   const src = productImage(p)
   return (
-    <div className="card home-product-card" onClick={() => onSelect(p)} role="button" tabIndex={0}>
-      {src ? (
-        <img src={src} alt={p.name} className="home-product-img" />
-      ) : (
-        <div className="home-product-img placeholder">Sin imagen</div>
-      )}
+    <div
+      className={`card home-product-card ${inCurrent ? '' : 'sold-out-card'}`}
+      onClick={() => inCurrent && onSelect(p)}
+      role="button"
+      tabIndex={inCurrent ? 0 : -1}
+    >
+      <div className="home-product-img-wrap">
+        {src ? (
+          <img src={src} alt={p.name} className="home-product-img" />
+        ) : (
+          <div className="home-product-img placeholder">Sin imagen</div>
+        )}
+        {!inCurrent && <span className="home-product-sold">Agotado</span>}
+      </div>
       <div className="home-product-info">
         <strong>{p.name}</strong>
         <p className="home-product-price">S/ {Number(p.price).toFixed(2)}</p>
@@ -24,10 +32,12 @@ const benefits = [
   { icon: '❤', title: 'Atención amable', desc: 'Estamos para ayudarte' },
 ]
 
-export default function Home({ products, current, onAdd, setView }) {
+export default function Home({ products, shifts, current, onAdd, setView }) {
   const currentData = current?.current
   const open = currentData?.is_open
 
+  const openShiftIds = new Set((shifts || []).filter((s) => s.is_open).map((s) => s.id))
+  const isAvailable = (p) => p.is_active && openShiftIds.has(p.shift_id)
   const sample = products.slice(0, 4)
 
   return (
@@ -72,7 +82,7 @@ export default function Home({ products, current, onAdd, setView }) {
           <h2 id="home-products-title" className="section-title center">Productos destacados</h2>
           <div className="home-products-grid">
             {sample.map((p) => (
-              <ProductCard key={p.id} p={p} onSelect={() => onAdd(p, 1)} />
+              <ProductCard key={p.id} p={p} inCurrent={isAvailable(p)} onSelect={() => onAdd(p, 1)} />
             ))}
           </div>
           <div className="home-products-actions">

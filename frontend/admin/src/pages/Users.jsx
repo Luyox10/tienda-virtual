@@ -98,11 +98,9 @@ export default function Users({ token }) {
                 <td>{orderCount(u.id)}</td>
                 <td>
                   <button className="btn small" onClick={() => setViewUser(u)}>Ver</button>
-                  {u.role !== 'admin' && (
-                    <button className="btn small danger" onClick={() => setDeleteConfirm(u)}>
-                      Eliminar
-                    </button>
-                  )}
+                  <button className="btn small danger" onClick={() => setDeleteConfirm(u)}>
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             ))

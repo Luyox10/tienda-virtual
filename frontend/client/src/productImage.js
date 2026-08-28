@@ -1,10 +1,18 @@
 const IMAGES_PREFIX = '/imagenes/productos/'
 
+function normalizeImageUrl(url) {
+  if (url.startsWith('http')) return url
+  const relative = url.replace(/^\/?imagenes\/productos\//, '')
+  if (relative === url) {
+    if (url.startsWith('/')) return url
+    return `${IMAGES_PREFIX}${url}`
+  }
+  return `${IMAGES_PREFIX}${relative}`
+}
+
 export function productImage(p) {
   if (p.image_url) {
-    if (p.image_url.startsWith('http')) return p.image_url
-    const clean = p.image_url.startsWith(IMAGES_PREFIX) ? p.image_url : `${IMAGES_PREFIX}${p.image_url}`
-    return clean
+    return normalizeImageUrl(p.image_url)
   }
   const name = p.name?.toLowerCase() || ''
   if (name.includes('causa')) return `${IMAGES_PREFIX}causa-pollo.jpg`

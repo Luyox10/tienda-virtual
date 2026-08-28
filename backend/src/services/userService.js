@@ -31,9 +31,32 @@ const create = async ({ role_id, full_name, email, password_hash, phone }) => {
 };
 
 const remove = async (id) => {
-  const [result] = await db.execute('DELETE FROM users WHERE id = ?', [id]);
-  if (result.affectedRows === 0) throw new Error('Usuario no encontrado');
-  return { id };
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const [orderRows] = await conn.execute('SELECT id FROM orders WHERE user_id = ?', [id]);
+    const orderIds = orderRows.map((o) => o.id);
+
+    if (orderIds.length > 0) {
+      const placeholders = orderIds.map(() => '?').join(',');
+      await conn.execute(`DELETE FROM payments WHERE order_id IN (${placeholders})`, orderIds);
+      await conn.execute(`DELETE FROM order_items WHERE order_id IN (${placeholders})`, orderIds);
+      await conn.execute(`DELETE FROM orders WHERE id IN (${placeholders})`, orderIds);
+    }
+
+    await conn.execute('DELETE FROM payments WHERE user_id = ?', [id]);
+    const [result] = await conn.execute('DELETE FROM users WHERE id = ?', [id]);
+    if (result.affectedRows === 0) throw new Error('Usuario no encontrado');
+
+    await conn.commit();
+    return { id };
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    conn.release();
+  }
 };
 
 module.exports = { findByEmail, findById, list, create, remove };

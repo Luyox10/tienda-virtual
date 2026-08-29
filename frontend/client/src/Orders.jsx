@@ -61,13 +61,6 @@ export default function Orders({ token, onBack, onPay }) {
 
   return (
     <main className="page orders-page">
-      <h2 className="page-title">
-        <span>Mis pedidos</span>
-        <button className="btn secondary small" onClick={onBack}>
-          Volver
-        </button>
-      </h2>
-
       {error && <p className="error">{error}</p>}
 
       {selected ? (
@@ -76,6 +69,21 @@ export default function Orders({ token, onBack, onPay }) {
         </>
       ) : (
         <>
+          <section className="page-hero" aria-label="Mis pedidos">
+            <div className="page-hero-content">
+              <span className="page-hero-eyebrow">PEDIDOS</span>
+              <h1 className="page-hero-title">Mis pedidos</h1>
+              <p className="page-hero-subtitle">Revisa el estado y el detalle de tus pedidos</p>
+              <button className="page-hero-cta" onClick={onBack}>
+                Volver
+              </button>
+            </div>
+
+            <div className="page-hero-visual" aria-hidden="true">
+              <img src="/imagenes/hero-home.svg" alt="Sabor Delicioso" className="page-hero-img" />
+            </div>
+          </section>
+
           <div className="order-filters" role="tablist" aria-label="Filtrar pedidos">
             {FILTERS.map((f) => (
               <button

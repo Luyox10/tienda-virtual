@@ -155,7 +155,18 @@ function App() {
     if (view === 'contact') {
       return (
         <main className="page contact-page">
-          <h1 className="page-title center">Contacto</h1>
+          <section className="page-hero" aria-label="Contacto">
+            <div className="page-hero-content">
+              <span className="page-hero-eyebrow">CONTÁCTANOS</span>
+              <h1 className="page-hero-title">Contacto</h1>
+              <p className="page-hero-subtitle">Pronto podrás contactarnos directamente desde aquí.</p>
+            </div>
+
+            <div className="page-hero-visual" aria-hidden="true">
+              <img src="/imagenes/hero-home.svg" alt="Sabor Delicioso" className="page-hero-img" />
+            </div>
+          </section>
+
           <p className="empty">Pronto podrás contactarnos directamente desde aquí.</p>
         </main>
       )

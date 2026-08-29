@@ -29,22 +29,29 @@ export default function ProductsPage({ products, shifts, current, onAdd }) {
 
   return (
     <main className="page products-page">
-      <header className="products-hero">
-        <h1 className="products-title">Nuestros productos</h1>
-        <p className="products-subtitle">Elige tus favoritos según el turno disponible</p>
+      <section className="page-hero" aria-label="Productos">
+        <div className="page-hero-content">
+          <span className="page-hero-eyebrow">PRODUCTOS</span>
+          <h1 className="page-hero-title">Nuestros productos</h1>
+          <p className="page-hero-subtitle">Elige tus favoritos según el turno disponible</p>
 
-        {currentData && (
-          <div className="products-current-shift" role="status" aria-live="polite">
-            <span className="products-current-name">{currentData.name}</span>
-            <span className="products-current-time">
-              {currentData.start_time?.slice(0, 5)} - {currentData.end_time?.slice(0, 5)}
-            </span>
-            <span className={`products-current-status ${currentData.is_open ? 'open' : 'closed'}`}>
-              {currentData.is_open ? 'Abierto' : 'Cerrado'}
-            </span>
-          </div>
-        )}
-      </header>
+          {currentData && (
+            <div className="products-current-shift" role="status" aria-live="polite">
+              <span className="products-current-name">{currentData.name}</span>
+              <span className="products-current-time">
+                {currentData.start_time?.slice(0, 5)} - {currentData.end_time?.slice(0, 5)}
+              </span>
+              <span className={`products-current-status ${currentData.is_open ? 'open' : 'closed'}`}>
+                {currentData.is_open ? 'Abierto' : 'Cerrado'}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="page-hero-visual" aria-hidden="true">
+          <img src="/imagenes/hero-home.svg" alt="Sabor Delicioso" className="page-hero-img" />
+        </div>
+      </section>
 
       <section className="products-filters">
         <input

@@ -29,11 +29,21 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [postLoginAction, setPostLoginAction] = useState(null)
   const [cart, setCart] = useState(() => {
+    localStorage.removeItem('cart')
+    const sessionKey = sessionStorage.getItem('cartSession')
+    const currentKey = window.name || (crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`)
+    if (sessionKey !== currentKey) {
+      window.name = currentKey
+      sessionStorage.setItem('cartSession', currentKey)
+      sessionStorage.removeItem('cart')
+      return []
+    }
     const saved = sessionStorage.getItem('cart')
     return saved ? JSON.parse(saved) : []
   })
 
   useEffect(() => {
+    localStorage.removeItem('cart')
     sessionStorage.setItem('cart', JSON.stringify(cart))
   }, [cart])
 

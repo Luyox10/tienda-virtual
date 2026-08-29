@@ -154,7 +154,7 @@ function App() {
 
     if (view === 'contact') {
       return (
-        <main className="page contact-page card">
+        <main className="page contact-page">
           <h1 className="page-title center">Contacto</h1>
           <p className="empty">Pronto podrás contactarnos directamente desde aquí.</p>
         </main>
@@ -194,15 +194,17 @@ function App() {
         )
       }
       return (
-        <main className="page card auth-message">
-          <h2>Mis pedidos</h2>
-          <p>Inicia sesión para ver el registro de tus pedidos.</p>
-          <button className="btn" onClick={() => setView('login')}>
-            Iniciar sesión
-          </button>
-          <button className="btn secondary" onClick={() => setView('home')}>
-            Volver al inicio
-          </button>
+        <main className="page auth-message">
+          <h2 className="page-title center">Mis pedidos</h2>
+          <p className="empty">Inicia sesión para ver el registro de tus pedidos.</p>
+          <div className="auth-actions">
+            <button className="btn" onClick={() => setView('login')}>
+              Iniciar sesión
+            </button>
+            <button className="btn secondary" onClick={() => setView('home')}>
+              Volver al inicio
+            </button>
+          </div>
         </main>
       )
     }
@@ -226,10 +228,12 @@ function App() {
         return <Profile user={user} onLogout={handleLogout} />
       }
       return (
-        <main className="page card auth-message">
-          <h2>Mi cuenta</h2>
-          <p>Inicia sesión para ver tu perfil.</p>
-          <button className="btn" onClick={() => setView('login')}>Iniciar sesión</button>
+        <main className="page auth-message">
+          <h2 className="page-title center">Mi cuenta</h2>
+          <p className="empty">Inicia sesión para ver tu perfil.</p>
+          <button className="btn" onClick={() => setView('login')}>
+            Iniciar sesión
+          </button>
         </main>
       )
     }

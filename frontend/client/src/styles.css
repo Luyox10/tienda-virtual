@@ -353,13 +353,23 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
 
 /* Cart and orders */
 .page-title {
-  font-size: 1.5rem;
-  margin: 1.25rem 0 0.75rem;
+  font-size: 1.75rem;
+  margin: 0 0 1.5rem;
+  padding: 2rem 2.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.page-title.center {
+  justify-content: center;
+  text-align: center;
 }
 
 .table {

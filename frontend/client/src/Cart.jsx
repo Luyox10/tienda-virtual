@@ -4,7 +4,7 @@ import { productImage } from './productImage'
 
 const DELIVERY = 3.00
 
-export default function Cart({ cart, products, isAuthenticated, token, onUpdate, onClear, onBack, onLogin, onOrder }) {
+export default function Cart({ cart, products, isAuthenticated, token, current, onUpdate, onClear, onBack, onLogin, onOrder }) {
   const [error, setError] = useState(null)
 
   const findProduct = (id) => products.find((p) => p.id === Number(id))
@@ -28,7 +28,14 @@ export default function Cart({ cart, products, isAuthenticated, token, onUpdate,
 
   const removeItem = (id) => onUpdate(id, 0)
 
+  const currentShift = current?.current
+  const isShiftOpen = !!currentShift?.is_open
+
   const checkout = async () => {
+    if (!isShiftOpen) {
+      setError('El turno actual está cerrado')
+      return
+    }
     if (!isAuthenticated) {
       onLogin()
       return
@@ -58,6 +65,10 @@ export default function Cart({ cart, products, isAuthenticated, token, onUpdate,
       </h2>
 
       {error && <p className="error">{error}</p>}
+
+      {cart.length > 0 && !isShiftOpen && (
+        <p className="error">El turno actual está cerrado. No se pueden realizar pagos en este momento.</p>
+      )}
 
       {cart.length === 0 ? (
         <p className="empty">El carrito está vacío. Agrega productos para comenzar.</p>
@@ -96,12 +107,21 @@ export default function Cart({ cart, products, isAuthenticated, token, onUpdate,
                     </button>
                   </div>
                   <p className="cart-subtotal">S/ {itemSubtotal(item).toFixed(2)}</p>
-                  <button
-                    className="btn small danger"
-                    onClick={() => removeItem(item.product_id)}
-                  >
-                    Eliminar
-                  </button>
+                  <div className="cart-item-actions">
+                    <button
+                      className="btn small success"
+                      onClick={checkout}
+                      disabled={!isShiftOpen}
+                    >
+                      Pagar
+                    </button>
+                    <button
+                      className="btn small danger"
+                      onClick={() => removeItem(item.product_id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </li>
               )
             })}
@@ -124,7 +144,11 @@ export default function Cart({ cart, products, isAuthenticated, token, onUpdate,
               <button className="btn secondary" onClick={onBack}>
                 Seguir comprando
               </button>
-              <button className="btn" onClick={checkout}>
+              <button
+                className="btn"
+                onClick={checkout}
+                disabled={!isShiftOpen || cart.length === 0}
+              >
                 {isAuthenticated ? 'Continuar' : 'Iniciar sesión para continuar'}
               </button>
             </div>

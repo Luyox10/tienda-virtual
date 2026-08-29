@@ -179,6 +179,7 @@ function App() {
           products={products}
           isAuthenticated={isAuthenticated}
           token={token}
+          current={current}
           onUpdate={updateCart}
           onClear={clearCart}
           onBack={() => setView('home')}

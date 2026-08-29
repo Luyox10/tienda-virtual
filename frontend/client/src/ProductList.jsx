@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import ProductModal from './ProductModal'
 import { productImage } from './productImage'
+import './Products.css'
 
 export default function ProductList({ products, shifts, current, onAdd }) {
   const [selected, setSelected] = useState(null)
@@ -11,8 +12,6 @@ export default function ProductList({ products, shifts, current, onAdd }) {
     [shifts]
   )
 
-  const currentShiftId = current?.current?.id
-  const currentOpen = current?.current?.is_open
   const isAvailable = (p) => p.is_active && openShiftIds.has(p.shift_id)
 
   const handleAdd = (product, quantity) => {
@@ -21,9 +20,15 @@ export default function ProductList({ products, shifts, current, onAdd }) {
     setTimeout(() => setJustAdded(null), 1600)
   }
 
+  const shiftTagClass = (name) => {
+    const lower = (name || '').toLowerCase()
+    if (lower.includes('mañana')) return 'product-tag product-tag-morning'
+    if (lower.includes('tarde')) return 'product-tag product-tag-afternoon'
+    return 'product-tag product-tag-night'
+  }
+
   return (
     <section className="products-section">
-      <h2 className="page-title">Productos del turno</h2>
       {products.length === 0 ? (
         <p className="empty">No hay productos disponibles.</p>
       ) : (
@@ -32,48 +37,44 @@ export default function ProductList({ products, shifts, current, onAdd }) {
             const inCurrent = isAvailable(p)
             const src = productImage(p)
             return (
-              <div
+              <article
                 key={p.id}
-                className={`card product-card ${inCurrent ? '' : 'sold-out-card'}`}
+                className={`product-card ${inCurrent ? '' : 'product-card-sold'}`}
                 onClick={() => inCurrent && setSelected(p)}
                 role="button"
                 tabIndex={inCurrent ? 0 : -1}
               >
-                {src ? (
-                  <img
-                    src={src}
-                    alt={p.name}
-                    className="product-img"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="placeholder">Sin imagen</div>
-                )}
-
-                <div className="meta">
-                  <span className="badge shift">{p.shift_name}</span>
-                  {inCurrent ? (
-                    <span className="badge accepted">Disponible</span>
+                <div className="product-img-wrap">
+                  {src ? (
+                    <img
+                      src={src}
+                      alt={p.name}
+                      className="product-img"
+                      loading="lazy"
+                    />
                   ) : (
-                    <span className="badge sold-out">Agotado</span>
+                    <div className="product-img placeholder">Sin imagen</div>
                   )}
+                  {!inCurrent && <span className="product-sold-overlay">Agotado</span>}
                 </div>
 
-                <h3>{p.name}</h3>
-                {p.description && <p className="description">{p.description}</p>}
-                <p className="price">S/ {p.price}</p>
-
-                <button
-                  className="btn"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (inCurrent) handleAdd(p, 1)
-                  }}
-                  disabled={!inCurrent}
-                >
-                  {inCurrent ? '🛒 Agregar' : 'No disponible'}
-                </button>
-              </div>
+                <div className="product-body">
+                  <h3 className="product-name">{p.name}</h3>
+                  <span className={shiftTagClass(p.shift_name)}>{p.shift_name}</span>
+                  <p className="product-price">S/ {Number(p.price).toFixed(2)}</p>
+                  {p.description && <p className="product-desc">{p.description}</p>}
+                  <button
+                    className="btn product-add-btn"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (inCurrent) handleAdd(p, 1)
+                    }}
+                    disabled={!inCurrent}
+                  >
+                    {inCurrent ? 'Agregar al carrito' : 'No disponible'}
+                  </button>
+                </div>
+              </article>
             )
           })}
         </div>

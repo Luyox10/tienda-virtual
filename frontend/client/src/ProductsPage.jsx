@@ -1,24 +1,22 @@
 import { useState, useMemo } from 'react'
 import ProductList from './ProductList'
+import './Products.css'
 
 export default function ProductsPage({ products, shifts, current, onAdd }) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('Todos')
 
   const categories = useMemo(() => {
-    const fromProducts = products
-      .map((p) => p.category)
-      .filter(Boolean)
-    const unique = Array.from(new Set(fromProducts))
-    return unique.length ? ['Todos', ...unique] : ['Todos']
-  }, [products])
+    const fromShifts = (shifts || []).map((s) => s.name)
+    return ['Todos', ...fromShifts]
+  }, [shifts])
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
       const matchesSearch =
         (p.name || '').toLowerCase().includes(search.toLowerCase()) ||
         (p.description || '').toLowerCase().includes(search.toLowerCase())
-      const matchesCategory = category === 'Todos' || p.category === category
+      const matchesCategory = category === 'Todos' || p.shift_name === category
       return matchesSearch && matchesCategory
     })
   }, [products, search, category])
@@ -27,46 +25,46 @@ export default function ProductsPage({ products, shifts, current, onAdd }) {
 
   return (
     <main className="page products-page">
-      <header className="page-hero small">
-        <h1 className="page-title center">Productos</h1>
-        <p className="page-subtitle">Elige tus productos favoritos según el turno actual.</p>
+      <header className="products-hero">
+        <h1 className="products-title">Nuestros productos</h1>
+        <p className="products-subtitle">Elige tus favoritos según el turno disponible</p>
 
         {currentData && (
-          <div className="current-shift-banner" role="status" aria-live="polite">
-            <span className="shift-name">{currentData.name}</span>
-            <span className="shift-time">{currentData.start_time} - {currentData.end_time}</span>
-            <span className={`shift-status ${currentData.is_open ? 'open' : 'closed'}`}>
+          <div className="products-current-shift" role="status" aria-live="polite">
+            <span className="products-current-name">{currentData.name}</span>
+            <span className="products-current-time">
+              {currentData.start_time?.slice(0, 5)} - {currentData.end_time?.slice(0, 5)}
+            </span>
+            <span className={`products-current-status ${currentData.is_open ? 'open' : 'closed'}`}>
               {currentData.is_open ? 'Abierto' : 'Cerrado'}
             </span>
           </div>
         )}
       </header>
 
-      <section className="filters">
+      <section className="products-filters">
         <input
           type="search"
-          className="search-input"
+          className="products-search"
           placeholder="Buscar producto..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           aria-label="Buscar producto"
         />
 
-        {categories.length > 1 && (
-          <div className="category-pills" role="tablist" aria-label="Categorías">
-            {categories.map((c) => (
-              <button
-                key={c}
-                className={`category-pill ${category === c ? 'active' : ''}`}
-                onClick={() => setCategory(c)}
-                role="tab"
-                aria-selected={category === c}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="products-pills" role="tablist" aria-label="Turnos">
+          {categories.map((c) => (
+            <button
+              key={c}
+              className={`products-pill ${category === c ? 'active' : ''}`}
+              onClick={() => setCategory(c)}
+              role="tab"
+              aria-selected={category === c}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
       </section>
 
       <ProductList products={filtered} shifts={shifts} current={current} onAdd={onAdd} />

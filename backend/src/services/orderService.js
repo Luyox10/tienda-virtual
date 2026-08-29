@@ -1,6 +1,5 @@
 const db = require('../config/db');
 const productService = require('./productService');
-const shiftService = require('./shiftService');
 const availabilityService = require('./availabilityService');
 
 const list = async (userId, role) => {
@@ -48,9 +47,15 @@ const create = async (userId, items) => {
     throw new Error('El pedido no tiene productos');
   }
 
-  const currentShift = await shiftService.current();
-  if (!currentShift) throw new Error('No hay un turno en horario actual');
-  if (!currentShift.is_open) throw new Error('El turno actual está cerrado');
+  const firstProduct = await productService.getById(items[0].product_id);
+  if (!firstProduct) throw new Error('Producto no encontrado');
+
+  const orderShiftId = firstProduct.shift_id;
+  const [shiftRows] = await db.execute('SELECT * FROM shifts WHERE id = ?', [orderShiftId]);
+  if (shiftRows.length === 0) throw new Error('Turno no encontrado');
+
+  const shift = shiftRows[0];
+  if (!shift.is_enabled) throw new Error('El turno seleccionado no está habilitado');
 
   const today = new Date().toISOString().slice(0, 10);
   const conn = await db.getConnection();
@@ -64,8 +69,8 @@ const create = async (userId, items) => {
       const product = await productService.getById(item.product_id);
       if (!product) throw new Error('Producto no encontrado');
       if (!product.is_active) throw new Error(`Producto ${product.name} está inactivo`);
-      if (product.shift_id !== currentShift.id) {
-        throw new Error(`Producto ${product.name} no está disponible en el turno actual`);
+      if (product.shift_id !== orderShiftId) {
+        throw new Error(`Producto ${product.name} no pertenece al turno seleccionado`);
       }
 
       const quantity = Number(item.quantity);
@@ -91,7 +96,7 @@ const create = async (userId, items) => {
 
     const [orderResult] = await conn.execute(
       'INSERT INTO orders (user_id, shift_id, status, total, payment_status) VALUES (?, ?, ?, ?, ?)',
-      [userId, currentShift.id, 'PENDING_PAYMENT', Number(total.toFixed(2)), 'PENDING']
+      [userId, orderShiftId, 'PENDING_PAYMENT', Number(total.toFixed(2)), 'PENDING']
     );
 
     const orderId = orderResult.insertId;

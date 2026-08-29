@@ -179,7 +179,7 @@ function App() {
           products={products}
           isAuthenticated={isAuthenticated}
           token={token}
-          current={current}
+          shifts={shifts}
           onUpdate={updateCart}
           onClear={clearCart}
           onBack={() => setView('home')}

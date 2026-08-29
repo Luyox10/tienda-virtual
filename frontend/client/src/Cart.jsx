@@ -4,7 +4,7 @@ import { productImage } from './productImage'
 
 const DELIVERY = 3.00
 
-export default function Cart({ cart, products, isAuthenticated, token, current, onUpdate, onClear, onBack, onLogin, onOrder }) {
+export default function Cart({ cart, products, isAuthenticated, token, shifts, onUpdate, onClear, onBack, onLogin, onOrder }) {
   const [error, setError] = useState(null)
 
   const findProduct = (id) => products.find((p) => p.id === Number(id))
@@ -28,12 +28,21 @@ export default function Cart({ cart, products, isAuthenticated, token, current, 
 
   const removeItem = (id) => onUpdate(id, 0)
 
-  const currentShift = current?.current
-  const isShiftOpen = !!currentShift?.is_open
+  const cartShiftIds = new Set(
+    cart.map((item) => findProduct(item.product_id)?.shift_id).filter(Boolean)
+  )
+  const cartShiftId = cartShiftIds.size === 1 ? [...cartShiftIds][0] : null
+  const cartShift = (shifts || []).find((s) => s.id === cartShiftId)
+  const hasMixedShifts = cartShiftIds.size > 1
+  const isShiftOpen = cart.length > 0 && !!cartShift?.is_open
 
   const checkout = async () => {
+    if (hasMixedShifts) {
+      setError('Los productos deben pertenecer al mismo turno')
+      return
+    }
     if (!isShiftOpen) {
-      setError('El turno actual está cerrado')
+      setError('El turno seleccionado no está habilitado')
       return
     }
     if (!isAuthenticated) {
@@ -66,8 +75,12 @@ export default function Cart({ cart, products, isAuthenticated, token, current, 
 
       {error && <p className="error">{error}</p>}
 
-      {cart.length > 0 && !isShiftOpen && (
-        <p className="error">El turno actual está cerrado. No se pueden realizar pagos en este momento.</p>
+      {cart.length > 0 && hasMixedShifts && (
+        <p className="error">Los productos deben pertenecer al mismo turno para poder pagar.</p>
+      )}
+
+      {cart.length > 0 && !hasMixedShifts && !isShiftOpen && (
+        <p className="error">El turno seleccionado no está habilitado. No se pueden realizar pagos en este momento.</p>
       )}
 
       {cart.length === 0 ? (
@@ -111,7 +124,7 @@ export default function Cart({ cart, products, isAuthenticated, token, current, 
                     <button
                       className="btn small success"
                       onClick={checkout}
-                      disabled={!isShiftOpen}
+                      disabled={!isShiftOpen || hasMixedShifts}
                     >
                       Pagar
                     </button>
@@ -147,7 +160,7 @@ export default function Cart({ cart, products, isAuthenticated, token, current, 
               <button
                 className="btn"
                 onClick={checkout}
-                disabled={!isShiftOpen || cart.length === 0}
+                disabled={!isShiftOpen || hasMixedShifts || cart.length === 0}
               >
                 {isAuthenticated ? 'Continuar' : 'Iniciar sesión para continuar'}
               </button>

@@ -1,9 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-
-const UPLOADS_DIR = path.join(__dirname, '../../uploads');
-
 const upload = async (req, res) => {
   try {
     const { image } = req.body;
@@ -13,18 +7,14 @@ const upload = async (req, res) => {
     if (!match) throw new Error('Formato de imagen inválido');
 
     const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+    const allowed = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+    if (!allowed.includes(ext)) throw new Error('Extensión no permitida');
+
     const base64 = match[2];
     const buffer = Buffer.from(base64, 'base64');
+    if (buffer.length > 5 * 1024 * 1024) throw new Error('La imagen no debe superar los 5 MB');
 
-    const filename = `${crypto.randomUUID()}.${ext}`;
-    const filePath = path.join(UPLOADS_DIR, filename);
-
-    await fs.promises.mkdir(UPLOADS_DIR, { recursive: true });
-    await fs.promises.writeFile(filePath, buffer);
-
-    const protocol = req.get('x-forwarded-proto') || req.protocol;
-    const origin = `${protocol}://${req.get('host')}`;
-    res.json({ image_url: `${origin}/uploads/${filename}` });
+    res.json({ image_url: image });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

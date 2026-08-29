@@ -1,7 +1,7 @@
 const IMAGES_PREFIX = '/imagenes/productos/'
 
 function normalizeImageUrl(url) {
-  if (url.startsWith('http')) return url
+  if (url.startsWith('http') || url.startsWith('data:')) return url
   const relative = url.replace(/^\/?imagenes\/productos\//, '')
   if (relative === url) {
     if (url.startsWith('/')) return url

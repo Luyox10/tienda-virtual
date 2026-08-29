@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { createOrder } from './services/api'
 import { productImage } from './productImage'
 
-const DELIVERY = 3.00
-
 export default function Cart({ cart, products, isAuthenticated, token, shifts, onUpdate, onClear, onBack, onLogin, onOrder }) {
   const [error, setError] = useState(null)
 
@@ -16,8 +14,7 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
   }
 
   const itemsTotal = cart.reduce((sum, item) => sum + itemSubtotal(item), 0)
-  const delivery = cart.length > 0 ? DELIVERY : 0
-  const total = Number((itemsTotal + delivery).toFixed(2))
+  const total = Number(itemsTotal.toFixed(2))
 
   const changeQty = (id, delta) => {
     const item = cart.find((i) => i.product_id === id)
@@ -141,14 +138,6 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
           </ul>
 
           <div className="cart-summary card">
-            <div className="summary-row">
-              <span>Subtotal</span>
-              <span>S/ {itemsTotal.toFixed(2)}</span>
-            </div>
-            <div className="summary-row">
-              <span>Delivery</span>
-              <span>S/ {delivery.toFixed(2)}</span>
-            </div>
             <div className="summary-row total-row">
               <span>TOTAL</span>
               <span>S/ {total.toFixed(2)}</span>

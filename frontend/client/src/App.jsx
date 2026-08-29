@@ -198,6 +198,10 @@ function App() {
           <Orders
             token={token}
             onBack={() => setView('home')}
+            onPay={(o) => {
+              setCurrentOrder(o)
+              setView('checkout')
+            }}
           />
         )
       }

@@ -10,7 +10,7 @@ const FILTERS = [
   { key: 'ACCEPTED', label: 'Aceptado' },
 ]
 
-export default function Orders({ token, onBack }) {
+export default function Orders({ token, onBack, onPay }) {
   const [orders, setOrders] = useState([])
   const [selected, setSelected] = useState(null)
   const [filter, setFilter] = useState('PENDING_PAYMENT')
@@ -46,6 +46,15 @@ export default function Orders({ token, onBack }) {
         setError(e.message)
         setLoading(false)
       })
+  }
+
+  const payOrder = async (id) => {
+    try {
+      const data = await getOrder(id, token)
+      onPay(data)
+    } catch (e) {
+      setError(e.message)
+    }
   }
 
   const goBack = () => setSelected(null)
@@ -138,9 +147,19 @@ export default function Orders({ token, onBack }) {
                         <span className="order-item-total">
                           S/ {Number(o.total).toFixed(2)}
                         </span>
-                        <button className="order-detail-link" onClick={() => viewDetail(o.id)}>
-                          Ver detalle <span aria-hidden="true">→</span>
-                        </button>
+                        <div className="order-item-actions">
+                          {o.status === 'PENDING_PAYMENT' && (
+                            <button
+                              className="btn small success"
+                              onClick={() => payOrder(o.id)}
+                            >
+                              Pagar
+                            </button>
+                          )}
+                          <button className="order-detail-link" onClick={() => viewDetail(o.id)}>
+                            Ver detalle <span aria-hidden="true">→</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </li>

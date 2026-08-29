@@ -34,12 +34,25 @@ const create = async ({ userId, orderId, amount, proofImageUrl, method = 'YAPE' 
   const [existing] = await db.execute('SELECT id FROM payments WHERE order_id = ?', [orderId]);
   if (existing.length > 0) throw new Error('Ya existe un pago para este pedido');
 
-  const [result] = await db.execute(
-    'INSERT INTO payments (order_id, user_id, method, amount, voucher_url) VALUES (?, ?, ?, ?, ?)',
-    [orderId, userId, method, amount, proofImageUrl || null]
-  );
-
-  return getById(result.insertId, userId, 'admin');
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+    const [result] = await conn.execute(
+      'INSERT INTO payments (order_id, user_id, method, amount, voucher_url, status) VALUES (?, ?, ?, ?, ?, ?)',
+      [orderId, userId, method, amount, proofImageUrl || null, 'APPROVED']
+    );
+    await conn.execute(
+      'UPDATE orders SET status = ?, payment_status = ? WHERE id = ?',
+      ['ACCEPTED', 'PAID', orderId]
+    );
+    await conn.commit();
+    return getById(result.insertId, userId, 'admin');
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    conn.release();
+  }
 };
 
 const validate = async (paymentId, adminId, action, reason) => {

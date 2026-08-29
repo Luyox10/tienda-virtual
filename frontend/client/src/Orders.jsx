@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { getOrders, getOrder } from './services/ordersService'
 import { productImage } from './productImage'
 import OrderTracker from './OrderTracker'
-import Loading from './Loading'
 import Empty from './Empty'
 
 const FILTERS = [
@@ -11,7 +10,7 @@ const FILTERS = [
   { key: 'ACCEPTED', label: 'Aceptado' },
 ]
 
-export default function Orders({ token, onBack, onPay }) {
+export default function Orders({ token, onBack }) {
   const [orders, setOrders] = useState([])
   const [selected, setSelected] = useState(null)
   const [filter, setFilter] = useState('PENDING_PAYMENT')
@@ -98,57 +97,57 @@ export default function Orders({ token, onBack, onPay }) {
             ))}
           </div>
 
-          {loading ? (
-            <Loading message="Cargando pedidos..." />
-          ) : filtered.length === 0 ? (
+          {loading ? null : filtered.length === 0 ? (
             <Empty message={emptyMessage} />
           ) : (
             <ul className="order-list">
-              {filtered.map((o) => (
-                <li key={o.id} className="order-item card">
-                  <div className="order-meta-row">
-                    <span className="order-id">#ORD-{String(o.id).padStart(4, '0')}</span>
-                    <span className={`order-status-badge ${o.status.toLowerCase()}`}>
-                      {o.status === 'ACCEPTED' || o.status === 'COMPLETED'
-                        ? '✓ '
-                        : o.status === 'REJECTED' || o.status === 'CANCELLED'
-                        ? '✗ '
-                        : '🟡 '}
-                      {o.status}
-                    </span>
-                  </div>
-                  <div className="order-detail-row">
-                    {productImage({ image_url: o.first_product_image, name: o.first_product_name }) ? (
-                      <img
-                        src={productImage({ image_url: o.first_product_image, name: o.first_product_name })}
-                        alt={o.first_product_name || 'Producto'}
-                        className="order-thumb"
-                      />
-                    ) : (
-                      <div className="order-thumb placeholder">Sin imagen</div>
-                    )}
-                    <div>
-                      <p className="order-product-name">{o.first_product_name || 'Pedido #' + o.id}</p>
-                      <p className="order-date">{new Date(o.created_at).toLocaleString('es-PE')}</p>
-                      <p className="order-shift">Turno: {o.shift_name || '-'}</p>
+              {filtered.map((o) => {
+                const src = productImage({
+                  image_url: o.first_product_image,
+                  name: o.first_product_name,
+                })
+                return (
+                  <li key={o.id} className="order-item card">
+                    <div className="order-item-img-wrap">
+                      {src ? (
+                        <img
+                          src={src}
+                          alt={o.first_product_name || 'Producto'}
+                          className="order-item-img"
+                        />
+                      ) : (
+                        <div className="order-item-img placeholder">Sin imagen</div>
+                      )}
                     </div>
-                    <p className="order-total">S/ {Number(o.total).toFixed(2)}</p>
-                  </div>
-                  <div className="order-actions">
-                    {o.status === 'PENDING_PAYMENT' && (
-                      <button className="btn small" onClick={() => onPay(o)}>
-                        Pagar
-                      </button>
-                    )}
-                    <button
-                      className={`btn small ${o.status === 'ACCEPTED' ? 'accepted-detail' : 'secondary'}`}
-                      onClick={() => viewDetail(o.id)}
-                    >
-                      {o.status === 'ACCEPTED' ? '✓ Ver detalle' : 'Ver detalle'}
-                    </button>
-                  </div>
-                </li>
-              ))}
+
+                    <div className="order-item-body">
+                      <div className="order-item-header">
+                        <span className="order-item-id">
+                          #ORD-{String(o.id).padStart(4, '0')}
+                        </span>
+                        <span className={`order-status-badge ${o.status.toLowerCase()}`}>
+                          {o.status}
+                        </span>
+                      </div>
+
+                      <h3 className="order-item-name">{o.first_product_name || 'Pedido #' + o.id}</h3>
+                      <p className="order-item-date">
+                        {new Date(o.created_at).toLocaleString('es-PE')}
+                      </p>
+                      <p className="order-item-shift">Turno: {o.shift_name || '-'}</p>
+
+                      <div className="order-item-footer">
+                        <span className="order-item-total">
+                          S/ {Number(o.total).toFixed(2)}
+                        </span>
+                        <button className="order-detail-link" onClick={() => viewDetail(o.id)}>
+                          Ver detalle <span aria-hidden="true">→</span>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                )
+              })}
             </ul>
           )}
         </>

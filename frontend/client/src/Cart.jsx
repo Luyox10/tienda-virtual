@@ -13,9 +13,6 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
     return Number((price * item.quantity).toFixed(2))
   }
 
-  const itemsTotal = cart.reduce((sum, item) => sum + itemSubtotal(item), 0)
-  const total = Number(itemsTotal.toFixed(2))
-
   const changeQty = (id, delta) => {
     const item = cart.find((i) => i.product_id === id)
     if (!item) return
@@ -136,25 +133,6 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
               )
             })}
           </ul>
-
-          <div className="cart-summary card">
-            <div className="summary-row total-row">
-              <span>TOTAL</span>
-              <span>S/ {total.toFixed(2)}</span>
-            </div>
-            <div className="cart-actions">
-              <button className="btn secondary" onClick={onBack}>
-                Seguir comprando
-              </button>
-              <button
-                className="btn"
-                onClick={checkout}
-                disabled={!isShiftOpen || hasMixedShifts || cart.length === 0}
-              >
-                {isAuthenticated ? 'Continuar' : 'Iniciar sesión para continuar'}
-              </button>
-            </div>
-          </div>
         </>
       )}
     </main>

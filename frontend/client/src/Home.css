@@ -232,15 +232,16 @@
 }
 
 .home-product-card {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  align-items: stretch;
   background: #fff;
   border: 1px solid var(--h-border);
   border-radius: var(--h-radius);
   overflow: hidden;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
   transition: box-shadow 0.2s, transform 0.2s;
-  min-height: 160px;
+  min-height: 170px;
 }
 
 .home-product-card:hover {
@@ -255,8 +256,8 @@
 
 .home-product-img-wrap {
   position: relative;
-  width: 150px;
-  flex-shrink: 0;
+  width: 100%;
+  min-height: 170px;
   overflow: hidden;
   background: #f9fafb;
 }
@@ -265,6 +266,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.3s;
 }
 
@@ -305,8 +307,8 @@
 .home-product-body {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  padding: 1rem 1.25rem;
+  justify-content: flex-start;
+  padding: 1.1rem 1.4rem;
   min-width: 0;
 }
 
@@ -319,9 +321,9 @@
 
 .home-product-desc {
   color: var(--h-gray);
-  font-size: 0.85rem;
-  line-height: 1.45;
-  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 0 0 0.6rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -330,26 +332,26 @@
 }
 
 .home-product-price {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--h-red);
-  margin: 0 0 1rem;
+  margin: 0 0 0.85rem;
 }
 
 .home-add-btn {
   margin-top: auto;
   width: fit-content;
-  padding: 0.65rem 1.25rem;
+  padding: 0.55rem 1.1rem;
   border-radius: 999px;
   border: none;
   background: var(--h-red);
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
   box-shadow: 0 3px 10px rgba(239, 68, 68, 0.28);
   transition: background 0.15s, transform 0.15s;
 }
@@ -462,13 +464,12 @@
   }
 
   .home-product-card {
-    flex-direction: column;
-    min-height: auto;
+    grid-template-columns: 120px 1fr;
+    min-height: 150px;
   }
 
   .home-product-img-wrap {
-    width: 100%;
-    height: 180px;
+    min-height: 150px;
   }
 
   .home-product-body {

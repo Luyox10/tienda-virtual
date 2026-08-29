@@ -71,7 +71,13 @@ export default function ProductList({ products, shifts, current, onAdd }) {
                     }}
                     disabled={!inCurrent}
                   >
-                    {inCurrent ? 'Agregar al carrito' : 'No disponible'}
+                    {inCurrent ? (
+                      <>
+                        <span aria-hidden="true">🛒</span> Agregar al carrito
+                      </>
+                    ) : (
+                      'No disponible'
+                    )}
                   </button>
                 </div>
               </article>

@@ -11,15 +11,19 @@ export default function ProductsPage({ products, shifts, current, onAdd }) {
     return ['Todos', ...fromShifts]
   }, [shifts])
 
+  const openShiftIds = new Set((shifts || []).filter((s) => s.is_open).map((s) => s.id))
+  const isAvailable = (p) => p.is_active && openShiftIds.has(p.shift_id)
+
   const filtered = useMemo(() => {
     return products.filter((p) => {
       const matchesSearch =
         (p.name || '').toLowerCase().includes(search.toLowerCase()) ||
         (p.description || '').toLowerCase().includes(search.toLowerCase())
-      const matchesCategory = category === 'Todos' || p.shift_name === category
-      return matchesSearch && matchesCategory
+      if (!matchesSearch) return false
+      if (category === 'Todos') return isAvailable(p)
+      return p.shift_name === category
     })
-  }, [products, search, category])
+  }, [products, search, category, shifts])
 
   const currentData = current?.current
 

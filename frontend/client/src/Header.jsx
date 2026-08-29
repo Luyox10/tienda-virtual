@@ -1,7 +1,50 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAuth } from './context/AuthContext'
+import { getOrders } from './services/api'
 
 export default function Header({ view, onNavigate, isAuthenticated, user, cartCount, onLogout }) {
+  const { token } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [acceptedOrders, setAcceptedOrders] = useState([])
+  const [readIds, setReadIds] = useState([])
+
+  const unreadCount = acceptedOrders.filter((o) => !readIds.includes(o.id)).length
+
+  const markRead = () => {
+    if (unreadCount === 0 || !user?.id) return
+    const updated = [...new Set([...readIds, ...acceptedOrders.map((o) => o.id)])]
+    localStorage.setItem(`read-accepted-${user.id}`, JSON.stringify(updated))
+    setReadIds(updated)
+  }
+
+  useEffect(() => {
+    if (!user?.id) {
+      setReadIds([])
+      return
+    }
+    try {
+      const saved = localStorage.getItem(`read-accepted-${user.id}`)
+      setReadIds(saved ? JSON.parse(saved) : [])
+    } catch {
+      setReadIds([])
+    }
+  }, [user?.id])
+
+  useEffect(() => {
+    if (!isAuthenticated || !token) return
+    const fetchOrders = async () => {
+      try {
+        const orders = await getOrders(token)
+        setAcceptedOrders(orders.filter((o) => o.status === 'ACCEPTED'))
+      } catch {
+        // ignore
+      }
+    }
+    fetchOrders()
+    const interval = setInterval(fetchOrders, 10000)
+    return () => clearInterval(interval)
+  }, [isAuthenticated, token])
 
   const nav = [
     { key: 'home', label: 'Inicio' },
@@ -36,9 +79,26 @@ export default function Header({ view, onNavigate, isAuthenticated, user, cartCo
             <span aria-hidden="true">🛒</span>
             {cartCount > 0 && <span className="tool-badge">{cartCount}</span>}
           </button>
-          <button className="tool-btn" aria-label="Notificaciones">
-            <span aria-hidden="true">🔔</span>
-          </button>
+          <div className="notif-container">
+            <button className="tool-btn" onClick={() => { setNotifOpen((p) => !p); if (!notifOpen) markRead() }} aria-label="Notificaciones">
+              <span aria-hidden="true">🔔</span>
+              {unreadCount > 0 && <span className="tool-badge notif-badge">{unreadCount}</span>}
+            </button>
+            {notifOpen && (
+              <div className="notification-dropdown">
+                {acceptedOrders.length === 0 ? (
+                  <div className="notification-empty">No tienes notificaciones</div>
+                ) : (
+                  acceptedOrders.map((o) => (
+                    <button key={o.id} className="notification-item" onClick={() => { setNotifOpen(false); onNavigate('orders') }}>
+                      <span className="notification-text">El administrador acaba de aceptar tu pedido, entra a detalles para tener un mejor control de tu compra por favor</span>
+                      <span className="notification-order">Pedido #{o.id}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
 
           {isAuthenticated ? (
             <div className="user-menu">

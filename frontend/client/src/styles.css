@@ -1224,6 +1224,39 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
 
 .dropdown button:hover { background: var(--primary-light); }
 
+.notif-container { position: relative; }
+.notification-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  width: 280px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  padding: 0.35rem;
+}
+.notification-item {
+  text-align: left;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text);
+}
+.notification-item:hover { background: var(--primary-light); }
+.notification-text { display: block; line-height: 1.35; }
+.notification-order { display: block; margin-top: 0.35rem; font-size: 0.8rem; color: var(--muted); }
+.notification-empty { padding: 0.75rem; text-align: center; color: var(--muted); font-size: 0.9rem; }
+.notif-badge { background: #ef4444 !important; }
+
 .mobile-menu-btn { display: none; }
 
 .mobile-menu {

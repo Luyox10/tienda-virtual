@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from './context/AuthContext'
 import { getProducts } from './services/productsService'
 import { getShifts, getCurrentShift } from './services/shiftsService'
+import { createOrder } from './services/api'
 import Loading from './Loading'
 import Header from './Header'
 import Footer from './Footer'
@@ -26,14 +27,41 @@ function App() {
   const [error, setError] = useState(null)
   const [currentOrder, setCurrentOrder] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [postLoginAction, setPostLoginAction] = useState(null)
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('cart')
+    const saved = sessionStorage.getItem('cart')
     return saved ? JSON.parse(saved) : []
   })
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart))
+    sessionStorage.setItem('cart', JSON.stringify(cart))
   }, [cart])
+
+  useEffect(() => {
+    if (!isAuthenticated || !postLoginAction || !token) return
+    if (postLoginAction.type === 'orders') {
+      if (cart.length > 0) {
+        const items = cart.map((i) => ({
+          product_id: i.product_id,
+          quantity: i.quantity,
+        }))
+        createOrder(items, token)
+          .then(() => {
+            setCart([])
+            setPostLoginAction(null)
+            setView('orders')
+          })
+          .catch((err) => {
+            setError(err.message)
+            setPostLoginAction(null)
+            setView('orders')
+          })
+      } else {
+        setPostLoginAction(null)
+        setView('orders')
+      }
+    }
+  }, [isAuthenticated, postLoginAction, token, cart])
 
   const loadData = (silent = false) => {
     if (!silent) {
@@ -61,19 +89,35 @@ function App() {
   }, [])
 
   const handleLogin = () => {
-    setView(returnTo || 'home')
+    if (!postLoginAction) {
+      setView(returnTo || 'home')
+    }
     setReturnTo(null)
   }
   const handleRegister = () => {
-    setView(returnTo || 'home')
+    const target = returnTo || 'orders'
     setReturnTo(null)
+    if (target === 'orders') {
+      setPostLoginAction({ type: 'orders' })
+    } else {
+      setView(target)
+    }
   }
   const handleLogout = () => {
     logout()
-    setView('home')
+    setCart([])
     setCurrentOrder(null)
+    setReturnTo(null)
+    setPostLoginAction(null)
+    sessionStorage.removeItem('cart')
+    localStorage.removeItem('cart')
+    setView('home')
   }
   const navigateTo = (v) => {
+    if ((v === 'orders' || v === 'profile') && !isAuthenticated) {
+      requireAuth(v)
+      return
+    }
     setView(v)
     setCurrentOrder(null)
   }
@@ -82,6 +126,7 @@ function App() {
       setView(v)
     } else {
       setReturnTo(v)
+      setPostLoginAction(v === 'orders' ? { type: 'orders' } : null)
       setView('login')
     }
     setCurrentOrder(null)

@@ -2256,6 +2256,10 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   align-items: start;
 }
 
+.contact-hero-wrap .page-hero-visual {
+  align-self: center;
+}
+
 .contact-help {
   margin-top: 1.5rem;
   padding-top: 1.25rem;

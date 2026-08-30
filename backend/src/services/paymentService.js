@@ -39,11 +39,11 @@ const create = async ({ userId, orderId, amount, proofImageUrl, method = 'YAPE' 
     await conn.beginTransaction();
     const [result] = await conn.execute(
       'INSERT INTO payments (order_id, user_id, method, amount, voucher_url, status) VALUES (?, ?, ?, ?, ?, ?)',
-      [orderId, userId, method, amount, proofImageUrl || null, 'APPROVED']
+      [orderId, userId, method, amount, proofImageUrl || null, 'PENDING']
     );
     await conn.execute(
       'UPDATE orders SET status = ?, payment_status = ? WHERE id = ?',
-      ['ACCEPTED', 'PAID', orderId]
+      ['PAYMENT_REVIEW', 'PENDING', orderId]
     );
     await conn.commit();
     return getById(result.insertId, userId, 'admin');
@@ -74,9 +74,10 @@ const validate = async (paymentId, adminId, action, reason) => {
       'UPDATE payments SET status = ?, reviewed_by = ?, review_notes = ? WHERE id = ?',
       [status, adminId, note, paymentId]
     );
+    const paymentStatus = action === 'approve' ? 'PAID' : 'REJECTED';
     await conn.execute(
-      'UPDATE orders SET status = ? WHERE id = ?',
-      [orderStatus, payment.order_id]
+      'UPDATE orders SET status = ?, payment_status = ? WHERE id = ?',
+      [orderStatus, paymentStatus, payment.order_id]
     );
     await conn.commit();
     return getById(paymentId, null, 'admin');

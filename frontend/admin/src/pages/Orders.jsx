@@ -192,6 +192,27 @@ export default function Orders({ token }) {
                     </div>
                   </div>
                 </div>
+
+                {selected.payment?.voucher_url && (
+                  <div className="payment-proof">
+                    <h4 className="detail-subtitle">Comprobante</h4>
+                    <img src={selected.payment.voucher_url} alt="Comprobante" className="payment-proof-img" />
+                  </div>
+                )}
+
+                {selected.payment?.status === 'PENDING' && (
+                  <div className="payment-actions">
+                    <input
+                      type="text"
+                      value={rejectReason}
+                      onChange={(e) => setRejectReason(e.target.value)}
+                      placeholder="Motivo de rechazo (opcional)"
+                      className="reject-reason"
+                    />
+                    <button className="btn small success" onClick={() => handleApprove(selected.payment.id)}>Aprobar</button>
+                    <button className="btn small danger" onClick={() => handleReject(selected.payment.id)}>Rechazar</button>
+                  </div>
+                )}
               </div>
             </div>,
             document.body

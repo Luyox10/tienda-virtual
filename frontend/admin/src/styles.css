@@ -929,6 +929,37 @@ select {
   background: #e5e7eb;
 }
 
+/* Products */
+.product-row td { vertical-align: middle; }
+
+.product-name {
+  font-weight: 700;
+  color: var(--admin-text);
+  display: block;
+  font-size: 1rem;
+}
+
+.product-price {
+  font-weight: 700;
+  color: var(--admin-orange);
+  font-size: 1rem;
+}
+
+.product-shift {
+  font-weight: 600;
+  color: var(--admin-muted);
+}
+
+.product-thumb {
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.product-thumb:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
 /* Orders */
 .order-row td { vertical-align: middle; }
 

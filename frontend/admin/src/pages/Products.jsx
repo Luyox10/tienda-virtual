@@ -65,7 +65,7 @@ export default function Products({ token }) {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    if (e && e.preventDefault) e.preventDefault()
     const body = {
       name: form.name,
       description: form.description,
@@ -101,6 +101,8 @@ export default function Products({ token }) {
     })
   }
 
+  const isEditing = !!form.id
+
   const doToggleActive = async () => {
     if (!confirm) return
     try {
@@ -126,9 +128,10 @@ export default function Products({ token }) {
       {error && <p className="error">{error}</p>}
       {message && <p className="message">{message}</p>}
 
-      <section className="dashboard-section">
-        <h2 className="section-title">{form.id ? 'Editar producto' : 'Crear producto'}</h2>
-        <form onSubmit={handleSubmit} className="form product-form">
+      {!isEditing && (
+        <section className="dashboard-section">
+          <h2 className="section-title">Crear producto</h2>
+          <form onSubmit={handleSubmit} className="form product-form">
           <input
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -188,6 +191,68 @@ export default function Products({ token }) {
           </div>
         </form>
       </section>
+      )}
+
+      {isEditing && (
+        <Modal
+          title="Editar producto"
+          onClose={reset}
+          onConfirm={handleSubmit}
+          confirmText="Guardar cambios"
+          confirmClass="btn"
+          cancelText="Cancelar"
+        >
+          <form onSubmit={handleSubmit} className="form product-form" onClick={(e) => e.stopPropagation()}>
+            <input
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="Nombre"
+              required
+            />
+            <input
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              placeholder="Descripción"
+            />
+            <input
+              type="number"
+              step="0.01"
+              value={form.price}
+              onChange={(e) => setForm({ ...form, price: e.target.value })}
+              placeholder="Precio"
+              required
+            />
+            <select
+              value={form.shift_id}
+              onChange={(e) => setForm({ ...form, shift_id: e.target.value })}
+              required
+            >
+              <option value="">Seleccionar turno</option>
+              {shifts.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+            {form.image_url && (
+              <img src={productImage(form)} alt="Vista previa" className="product-thumb-preview" />
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImage}
+              disabled={uploading}
+            />
+            {uploading && <p className="loading-message">Subiendo imagen...</p>}
+            <label className="form-check">
+              <input
+                type="checkbox"
+                checked={form.is_active}
+                onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+              />
+              <span>Activo</span>
+            </label>
+          </form>
+        </Modal>
+      )}
 
       <section className="dashboard-section">
         <div className="products-list-header">
@@ -210,16 +275,16 @@ export default function Products({ token }) {
             </tr>
           ) : (
             visibleProducts.map((p) => (
-              <tr key={p.id}>
+              <tr key={p.id} className="product-row">
                 <td>
                   <img src={productImage(p)} alt={p.name} className="product-thumb" />
                 </td>
                 <td>
-                  <strong>{p.name}</strong>
+                  <span className="product-name">{p.name}</span>
                   {p.description && <p className="product-desc">{p.description}</p>}
                 </td>
-                <td>S/ {p.price}</td>
-                <td>{shiftName(p.shift_id)}</td>
+                <td className="product-price">S/ {p.price}</td>
+                <td className="product-shift">{shiftName(p.shift_id)}</td>
                 <td><StatusBadge status={p.is_active ? 'active' : 'inactive'} /></td>
                 <td>
                   <button className="btn small" onClick={() => edit(p)}>Editar</button>

@@ -1233,8 +1233,10 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: var(--shadow);
-  width: 280px;
+  width: 320px;
   max-width: 90vw;
+  max-height: 380px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   z-index: 100;

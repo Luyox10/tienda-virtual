@@ -11,6 +11,10 @@ export default function AdminHeader({ title, user, onLogout, onMenuToggle }) {
         <button className="menu-toggle" onClick={onMenuToggle} aria-label="Abrir menú">
           ☰
         </button>
+        <a className="admin-brand" href="#" onClick={(e) => { e.preventDefault() }} aria-label="DeliTurnos">
+          <img src="/imagenes/productos/logo_deliturnos.png" alt="" className="admin-brand-logo" aria-hidden="true" />
+          <span className="admin-brand-name">Deli<span className="admin-brand-accent">Turnos</span></span>
+        </a>
         <div>
           <h1 className="admin-title">{title}</h1>
           <p className="admin-subtitle">Hoy tienes un resumen general de tu tienda.</p>

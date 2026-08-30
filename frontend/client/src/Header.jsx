@@ -73,7 +73,8 @@ export default function Header({ view, onNavigate, isAuthenticated, user, cartCo
     <header className="app-header" role="banner">
       <div className="inner header-inner">
         <a className="brand" href="#" onClick={(e) => { e.preventDefault(); onNavigate('home') }} aria-label="DeliTurnos - Inicio">
-          <img src="/imagenes/productos/logo_deliturnos.png" alt="DeliTurnos" className="brand-logo" />
+          <img src="/imagenes/productos/logo_deliturnos.png" alt="" className="brand-logo" aria-hidden="true" />
+          <span className="brand-name">Deli<span className="brand-accent">Turnos</span></span>
         </a>
 
         <nav className="main-nav" aria-label="Navegación principal">

@@ -87,7 +87,7 @@ export default function Orders({ token, onBack, onPay, refresh = 0 }) {
             </div>
 
             <div className="page-hero-visual" aria-hidden="true">
-              <img src="/imagenes/hero-home.svg" alt="DeliTurnos" className="page-hero-img" />
+              <img src="/imagenes/productos/logo_deliturnos.png" alt="DeliTurnos" className="page-hero-img" />
             </div>
           </section>
 

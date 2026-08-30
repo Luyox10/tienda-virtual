@@ -390,32 +390,6 @@ select {
   gap: 0.75rem;
 }
 
-.admin-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  color: var(--admin-text);
-  margin-right: 0.75rem;
-}
-
-.admin-brand-logo {
-  width: 34px;
-  height: 34px;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-.admin-brand-name {
-  font-weight: 800;
-  font-size: 1.15rem;
-  letter-spacing: -0.02em;
-}
-
-.admin-brand-accent {
-  color: var(--admin-orange);
-}
-
 .menu-toggle {
   display: inline-flex;
   align-items: center;

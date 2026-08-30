@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { getPaidProducts } from '../api'
+import { getPaidProducts, getShifts } from '../api'
 import PageHeader from '../components/PageHeader'
 import DataTable from '../components/DataTable'
 
@@ -33,6 +33,7 @@ function withinRange(date, range) {
 
 export default function Reports({ token }) {
   const [items, setItems] = useState([])
+  const [shifts, setShifts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [range, setRange] = useState('week')
@@ -40,9 +41,10 @@ export default function Reports({ token }) {
 
   useEffect(() => {
     setLoading(true)
-    getPaidProducts(token)
-      .then((data) => {
+    Promise.all([getPaidProducts(token), getShifts()])
+      .then(([data, shiftData]) => {
         setItems(data)
+        setShifts(shiftData)
         setLoading(false)
       })
       .catch((e) => {
@@ -51,9 +53,9 @@ export default function Reports({ token }) {
       })
   }, [token])
 
-  const shifts = useMemo(
-    () => Array.from(new Set(items.map((i) => i.shift_name))).sort(),
-    [items]
+  const shiftOptions = useMemo(
+    () => shifts.map((s) => s.name).sort(),
+    [shifts]
   )
 
   const filtered = useMemo(() => {
@@ -88,7 +90,7 @@ export default function Reports({ token }) {
           <span className="section-title">Turno</span>
           <select value={shiftFilter} onChange={(e) => setShiftFilter(e.target.value)}>
             <option value="all">Todos</option>
-            {shifts.map((s) => (
+            {shiftOptions.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
@@ -100,16 +102,18 @@ export default function Reports({ token }) {
 
       <section className="dashboard-section">
         <h2 className="section-title">Movimiento de productos vendidos</h2>
-        <DataTable headers={['Fecha', 'Hora', 'Turno', 'Producto', 'Cant.', 'P. unit.', 'Subtotal']}>
+        <DataTable headers={['Fecha', 'Hora', 'Usuario', 'Email', 'Turno', 'Producto', 'Cant.', 'P. unit.', 'Subtotal']}>
           {filtered.length === 0 ? (
             <tr>
-              <td colSpan="7" className="empty-cell">No hay productos pagados en este periodo.</td>
+              <td colSpan="9" className="empty-cell">No hay productos pagados en este periodo.</td>
             </tr>
           ) : (
             filtered.map((i) => (
               <tr key={i.id}>
                 <td>{formatDate(i.order_date)}</td>
                 <td>{formatTime(i.order_date)}</td>
+                <td>{i.user_name || `Usuario #${i.order_id}`}</td>
+                <td>{i.user_email || '—'}</td>
                 <td>{i.shift_name}</td>
                 <td>{i.product_name}</td>
                 <td>{i.quantity}</td>

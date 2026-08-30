@@ -27,4 +27,13 @@ const reject = async (req, res) => {
   }
 };
 
-module.exports = { list, approve, reject };
+const markPending = async (req, res) => {
+  try {
+    const payment = await paymentService.markPending(req.params.id, req.user.userId);
+    res.json(payment);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+module.exports = { list, approve, reject, markPending };

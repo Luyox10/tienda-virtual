@@ -91,6 +91,13 @@ li { margin: 0.4rem 0; }
 
 .btn.secondary:hover { background: #4b5563; }
 
+.btn.warning {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.btn.warning:hover { background: #d97706; }
+
 .message {
   color: #15803d;
   background: #dcfce7;
@@ -506,6 +513,13 @@ select {
 }
 
 .btn.secondary:hover { background: #4b5563; }
+
+.btn.warning {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.btn.warning:hover { background: #d97706; }
 
 /* Error toast */
 .error-toast {

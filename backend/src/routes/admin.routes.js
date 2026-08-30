@@ -2,7 +2,7 @@ const express = require('express');
 const { create, update: updateProduct, remove: removeProduct } = require('../controllers/adminProduct.controller');
 const { update: updateAvailability } = require('../controllers/availability.controller');
 const { update: updateShift } = require('../controllers/shift.controller');
-const { list: listPayments, approve, reject } = require('../controllers/adminPayment.controller');
+const { list: listPayments, approve, reject, markPending } = require('../controllers/adminPayment.controller');
 const { get: getDashboard } = require('../controllers/dashboard.controller');
 const { paidProducts: getPaidProducts } = require('../controllers/adminReport.controller');
 const { upload: uploadImage } = require('../controllers/adminUpload.controller');
@@ -21,5 +21,6 @@ router.get('/payments', verifyToken, requireRole('admin'), listPayments);
 router.get('/reports/paid-products', verifyToken, requireRole('admin'), getPaidProducts);
 router.patch('/payments/:id/approve', verifyToken, requireRole('admin'), approve);
 router.patch('/payments/:id/reject', verifyToken, requireRole('admin'), reject);
+router.patch('/payments/:id/pending', verifyToken, requireRole('admin'), markPending);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { getOrders, getOrder, getPayments, approvePayment, rejectPayment } from '../api'
+import { getOrders, getOrder, getPayments, approvePayment, rejectPayment, markPendingPayment } from '../api'
 import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
@@ -64,6 +64,17 @@ export default function Orders({ token }) {
     try {
       await rejectPayment(paymentId, token, rejectReason)
       setMessage('Pago rechazado')
+      load()
+      setSelected(null)
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  const handleMarkPending = async (paymentId) => {
+    try {
+      await markPendingPayment(paymentId, token)
+      setMessage('Pago marcado como pendiente')
       load()
       setSelected(null)
     } catch (err) {
@@ -209,6 +220,7 @@ export default function Orders({ token }) {
                       placeholder="Motivo de rechazo (opcional)"
                       className="reject-reason"
                     />
+                    <button className="btn small warning" onClick={() => handleMarkPending(selected.payment.id)}>Pendiente</button>
                     <button className="btn small success" onClick={() => handleApprove(selected.payment.id)}>Aprobar</button>
                     <button className="btn small danger" onClick={() => handleReject(selected.payment.id)}>Rechazar</button>
                   </div>

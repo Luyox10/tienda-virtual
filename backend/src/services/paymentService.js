@@ -41,12 +41,40 @@ const create = async ({ userId, orderId, amount, proofImageUrl, method = 'YAPE' 
       'INSERT INTO payments (order_id, user_id, method, amount, voucher_url, status) VALUES (?, ?, ?, ?, ?, ?)',
       [orderId, userId, method, amount, proofImageUrl || null, 'PENDING']
     );
-    await conn.execute(
-      'UPDATE orders SET status = ?, payment_status = ? WHERE id = ?',
-      ['PAYMENT_REVIEW', 'PENDING', orderId]
-    );
     await conn.commit();
     return getById(result.insertId, userId, 'admin');
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    conn.release();
+  }
+};
+
+const markPending = async (paymentId, adminId) => {
+  const [paymentRows] = await db.execute('SELECT * FROM payments WHERE id = ?', [paymentId]);
+  if (paymentRows.length === 0) throw new Error('Pago no encontrado');
+  const payment = paymentRows[0];
+
+  const [orderRows] = await db.execute('SELECT * FROM orders WHERE id = ?', [payment.order_id]);
+  if (orderRows.length === 0) throw new Error('Pedido no encontrado');
+  const order = orderRows[0];
+
+  if (order.status !== 'PENDING_PAYMENT') throw new Error('El pedido ya fue marcado');
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+    await conn.execute(
+      'UPDATE payments SET reviewed_by = ?, review_notes = ? WHERE id = ?',
+      [adminId, 'Marcado como pendiente', paymentId]
+    );
+    await conn.execute(
+      'UPDATE orders SET status = ?, payment_status = ? WHERE id = ?',
+      ['PAYMENT_REVIEW', 'PENDING', order.order_id]
+    );
+    await conn.commit();
+    return getById(paymentId, null, 'admin');
   } catch (err) {
     await conn.rollback();
     throw err;
@@ -89,4 +117,4 @@ const validate = async (paymentId, adminId, action, reason) => {
   }
 };
 
-module.exports = { list, getById, create, validate };
+module.exports = { list, getById, create, validate, markPending };

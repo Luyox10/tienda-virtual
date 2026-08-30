@@ -92,3 +92,5 @@ export const getPaidProducts = (token) => authGetJson('/admin/reports/paid-produ
 export const approvePayment = (id, token) => authPatchJson(`/admin/payments/${id}/approve`, {}, token);
 export const rejectPayment = (id, token, reason) =>
   authPatchJson(`/admin/payments/${id}/reject`, { rejection_reason: reason }, token);
+export const markPendingPayment = (id, token) =>
+  authPatchJson(`/admin/payments/${id}/pending`, {}, token);

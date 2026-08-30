@@ -6,18 +6,6 @@ import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
 import { productImage } from '../utils/productImage'
 
-function clientName(o) {
-  return o.user_name || o.user_email || `Usuario #${o.user_id}`
-}
-
-function clientMeta(o) {
-  return o.user_name && o.user_email ? o.user_email : `ID: ${o.user_id}`
-}
-
-function productThumb(o) {
-  return productImage({ image_url: o.first_product_image, name: o.first_product_name })
-}
-
 const FILTERS = [
   { key: 'PENDING', label: 'Pendientes' },
   { key: 'ACCEPTED', label: 'Aceptados' },
@@ -120,30 +108,19 @@ export default function Orders({ token }) {
           </div>
         </div>
 
-        <DataTable headers={['Pedido', 'Producto', 'Cliente', 'Turno', 'Total', 'Pago', 'Estado', 'Fecha', '']}>
+        <DataTable headers={['ID', 'Usuario', 'Email', 'Turno', 'Total', 'Pago', 'Estado', 'Fecha', '']}>
           {filtered.length === 0 ? (
             <tr>
               <td colSpan="9" className="empty-cell">No hay pedidos en este filtro.</td>
             </tr>
           ) : (
             filtered.map((o) => (
-              <tr key={o.id} className="order-row">
-                <td><span className="order-id">#ORD-{o.id}</span></td>
-                <td>
-                  <div className="order-product-cell">
-                    <img src={productThumb(o)} alt={o.first_product_name || ''} className="product-thumb" />
-                    <span className="order-product-name">{o.first_product_name || '—'}</span>
-                  </div>
-                </td>
-                <td>
-                  <div className="order-client-cell">
-                    <strong>{clientName(o)}</strong>
-                    <span className="order-client-meta">{clientMeta(o)}</span>
-                    {o.user_phone && <span className="order-client-meta">{o.user_phone}</span>}
-                  </div>
-                </td>
+              <tr key={o.id}>
+                <td>#ORD-{o.id}</td>
+                <td>{o.user_name || `Usuario #${o.user_id}`}</td>
+                <td>{o.user_email || '—'}</td>
                 <td>{o.shift_name || o.shift_id}</td>
-                <td><strong className="order-total">S/ {o.total}</strong></td>
+                <td>S/ {o.total}</td>
                 <td><StatusBadge status={o.payment_status} /></td>
                 <td><StatusBadge status={o.status} /></td>
                 <td>{formatDate(o.created_at)}</td>
@@ -168,17 +145,14 @@ export default function Orders({ token }) {
                   </button>
                 </div>
 
-                <div className="order-client-card">
-                  <div className="order-client-avatar">👤</div>
-                  <div className="order-client-info">
-                    <strong>{clientName(selected)}</strong>
-                    <p>{selected.user_email || `Usuario #${selected.user_id}`}</p>
-                    {selected.user_phone && <p>{selected.user_phone}</p>}
-                  </div>
-                </div>
-
                 <div className="order-detail-grid">
                   <div>
+                    <p className="detail-label">Usuario</p>
+                    <p className="detail-value">{selected.user_name || `Usuario #${selected.user_id}`}</p>
+
+                    <p className="detail-label">Email</p>
+                    <p className="detail-value">{selected.user_email || '—'}</p>
+
                     <p className="detail-label">Turno</p>
                     <p className="detail-value">{selected.shift_name || selected.shift_id}</p>
 

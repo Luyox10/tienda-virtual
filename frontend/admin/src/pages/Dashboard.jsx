@@ -39,14 +39,36 @@ export default function Dashboard({ token, onNavigate }) {
       .finally(() => setLoading(false))
   }, [token])
 
-  const stats = dashboard || {
-    sales_today: 0,
-    sales_month: 0,
-    pending_payment_orders: 0,
-    accepted_orders: 0,
-    rejected_orders: 0,
-    top_product_today: null,
-  }
+  const computedStats = useMemo(() => {
+    const today = new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
+    const currentMonth = new Date().getMonth()
+    const currentYear = new Date().getFullYear()
+
+    const accepted = orders.filter((o) => o.status === 'ACCEPTED')
+    const rejected = orders.filter((o) => o.status === 'REJECTED')
+    const sent = orders.filter((o) => o.status === 'PENDING_PAYMENT')
+
+    const salesToday = accepted
+      .filter((o) => new Date(o.created_at).toLocaleDateString('es-PE', { timeZone: 'America/Lima' }) === today)
+      .reduce((sum, o) => sum + Number(o.total), 0)
+    const salesMonth = accepted
+      .filter((o) => {
+        const d = new Date(o.created_at)
+        return d.getFullYear() === currentYear && d.getMonth() === currentMonth
+      })
+      .reduce((sum, o) => sum + Number(o.total), 0)
+
+    return {
+      sales_today: salesToday,
+      sales_month: salesMonth,
+      accepted_orders: accepted.length,
+      rejected_orders: rejected.length,
+      pending_payment_orders: sent.length,
+      top_product_today: null,
+    }
+  }, [orders])
+
+  const stats = dashboard || computedStats
 
   const recentOrders = orders.slice(0, 5)
 
@@ -80,11 +102,6 @@ export default function Dashboard({ token, onNavigate }) {
         title="Hola, Administrador 👋"
         subtitle="Bienvenido al panel de administración de tu tienda."
       />
-      {dashboard === null && (
-        <p className="warning">
-          Datos del backend aún no disponibles. Se muestran mocks.
-        </p>
-      )}
 
       <section className="dashboard-section">
         <div className="stats-grid">

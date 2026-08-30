@@ -90,8 +90,8 @@ function App() {
         <div className="login-screen">
           <form onSubmit={handleLogin} className="form login-form">
             <div className="brand auth-brand">
-              <span className="brand-dot" />
-              Sabor Delicioso Admin
+              <img src="/imagenes/productos/logo_deliturnos.png" alt="" className="brand-logo" aria-hidden="true" />
+              <span>Deli<span className="brand-accent">Turnos</span> Admin</span>
             </div>
             <h2>Iniciar sesión</h2>
             <input name="email" type="email" placeholder="Correo" required />

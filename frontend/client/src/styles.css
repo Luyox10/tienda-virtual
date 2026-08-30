@@ -74,6 +74,23 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   background: var(--primary);
 }
 
+.brand-logo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.brand-name {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brand-accent {
+  color: var(--primary);
+  font-weight: 500;
+}
+
 .nav {
   display: flex;
   align-items: center;

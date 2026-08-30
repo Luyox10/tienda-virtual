@@ -49,7 +49,7 @@ export default function ProductsPage({ products, shifts, current, onAdd }) {
         </div>
 
         <div className="page-hero-visual" aria-hidden="true">
-          <img src="/imagenes/hero-home.svg" alt="Sabor Delicioso" className="page-hero-img" />
+          <img src="/imagenes/hero-home.svg" alt="DeliTurnos" className="page-hero-img" />
         </div>
       </section>
 

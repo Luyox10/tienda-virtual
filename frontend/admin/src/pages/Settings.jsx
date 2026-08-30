@@ -12,7 +12,7 @@ const TABS = [
 export default function Settings() {
   const [tab, setTab] = useState('general')
   const [form, setForm] = useState({
-    name: 'Sabor Delicioso',
+    name: 'DeliTurnos',
     description: 'Tienda de comida fresca y saludable.',
     phone: '999 888 777',
     address: 'Av. Los Sabores 123, Lima - Perú',

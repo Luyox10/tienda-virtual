@@ -80,7 +80,7 @@ export default function Home({ products, shifts, current, onAdd, setView }) {
         </div>
 
         <div className="home-hero-visual" aria-hidden="true">
-          <img src="/imagenes/hero-home.svg" alt="Sabor Delicioso" className="home-hero-img" />
+          <img src="/imagenes/hero-home.svg" alt="DeliTurnos" className="home-hero-img" />
         </div>
       </section>
 

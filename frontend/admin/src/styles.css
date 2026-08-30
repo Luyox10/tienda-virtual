@@ -229,6 +229,17 @@ select {
   background: var(--admin-orange);
 }
 
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.brand-accent {
+  color: var(--admin-orange);
+}
+
 /* Sidebar */
 .sidebar {
   width: 260px;
@@ -263,10 +274,22 @@ select {
   font-size: 1.75rem;
 }
 
+.sidebar-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
 .sidebar-title {
   display: block;
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+}
+
+.sidebar-title-accent {
+  color: var(--admin-orange);
 }
 
 .sidebar-subtitle {

@@ -2249,4 +2249,72 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   .page-hero-subtitle {
     font-size: 1rem;
   }
+
+  .contact-card {
+    margin: 0 1.5rem 2rem;
+  }
+}
+
+/* Contact page */
+.contact-card {
+  max-width: 640px;
+  margin: 0 auto 3rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1rem;
+  border-radius: 1rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.contact-row + .contact-row {
+  border-top: 1px solid #fed7aa;
+}
+
+.contact-row:hover {
+  background: #ffedd5;
+}
+
+.contact-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fee2e2;
+  font-size: 1.25rem;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.contact-label {
+  font-weight: 700;
+  color: #111827;
+  font-size: 1rem;
+}
+
+.contact-value {
+  font-weight: 600;
+  color: #ef4444;
+  font-size: 1rem;
+}
+
+.contact-subvalue {
+  color: #4b5563;
+  font-size: 0.95rem;
 }

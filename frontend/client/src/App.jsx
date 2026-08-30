@@ -215,8 +215,8 @@ function App() {
           <section className="page-hero" aria-label="Contacto">
             <div className="page-hero-content">
               <span className="page-hero-eyebrow">CONTÁCTANOS</span>
-              <h1 className="page-hero-title">Contacto</h1>
-              <p className="page-hero-subtitle">Pronto podrás contactarnos directamente desde aquí.</p>
+              <h1 className="page-hero-title">Contáctanos</h1>
+              <p className="page-hero-subtitle">Estamos aquí para ayudarte.</p>
             </div>
 
             <div className="page-hero-visual" aria-hidden="true">
@@ -224,7 +224,30 @@ function App() {
             </div>
           </section>
 
-          <p className="empty">Pronto podrás contactarnos directamente desde aquí.</p>
+          <section className="contact-card" aria-label="Información de contacto">
+            <a className="contact-row" href="https://wa.me/51999888777" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+              <span className="contact-icon whatsapp-icon" aria-hidden="true">💬</span>
+              <div className="contact-info">
+                <span className="contact-label">WhatsApp</span>
+                <span className="contact-value">999 888 777</span>
+              </div>
+            </a>
+            <a className="contact-row" href="https://wa.me/51999111222" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+              <span className="contact-icon whatsapp-icon" aria-hidden="true">💬</span>
+              <div className="contact-info">
+                <span className="contact-label">WhatsApp</span>
+                <span className="contact-value">999 111 222</span>
+              </div>
+            </a>
+            <div className="contact-row" aria-label="Horario de atención">
+              <span className="contact-icon hours-icon" aria-hidden="true">🕐</span>
+              <div className="contact-info">
+                <span className="contact-label">Horario de atención</span>
+                <span className="contact-value">Lunes a Domingo</span>
+                <span className="contact-subvalue">06:00 a.m. - 11:00 p.m.</span>
+              </div>
+            </div>
+          </section>
         </main>
       )
     }

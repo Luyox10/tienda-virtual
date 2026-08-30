@@ -28,6 +28,7 @@ function App() {
   const [currentOrder, setCurrentOrder] = useState(null)
   const [loading, setLoading] = useState(true)
   const [postLoginAction, setPostLoginAction] = useState(null)
+  const [ordersRefresh, setOrdersRefresh] = useState(0)
   const [cart, setCart] = useState(() => {
     localStorage.removeItem('cart')
     const sessionKey = sessionStorage.getItem('cartSession')
@@ -130,6 +131,7 @@ function App() {
     }
     setView(v)
     setCurrentOrder(null)
+    if (v === 'orders') setOrdersRefresh((r) => r + 1)
   }
   const requireAuth = (v) => {
     if (isAuthenticated) {
@@ -252,6 +254,7 @@ function App() {
         return (
           <Orders
             token={token}
+            refresh={ordersRefresh}
             onBack={() => setView('home')}
             onPay={(o) => {
               setCurrentOrder(o)

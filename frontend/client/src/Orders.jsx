@@ -10,7 +10,7 @@ const FILTERS = [
   { key: 'ACCEPTED', label: 'Aceptado' },
 ]
 
-export default function Orders({ token, onBack, onPay }) {
+export default function Orders({ token, onBack, onPay, refresh = 0 }) {
   const [orders, setOrders] = useState([])
   const [selected, setSelected] = useState(null)
   const [filter, setFilter] = useState('PENDING_PAYMENT')
@@ -32,8 +32,9 @@ export default function Orders({ token, onBack, onPay }) {
   }, [token])
 
   useEffect(() => {
+    setSelected(null)
     loadOrders()
-  }, [loadOrders])
+  }, [loadOrders, refresh])
 
   const viewDetail = (id) => {
     setLoading(true)

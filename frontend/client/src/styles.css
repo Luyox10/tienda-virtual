@@ -2256,6 +2256,26 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
 }
 
 /* Contact page */
+.contact-intro {
+  padding: 0.5rem 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #fed7aa;
+}
+
+.contact-intro-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.contact-intro-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
 .contact-card {
   max-width: 640px;
   margin: 0 auto 3rem;

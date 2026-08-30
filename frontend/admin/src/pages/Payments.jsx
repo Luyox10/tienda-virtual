@@ -62,15 +62,17 @@ export default function Payments({ token }) {
 
       <section className="dashboard-section">
         <h2 className="section-title">Pagos</h2>
-        <DataTable headers={['ID', 'Pedido', 'Método', 'Monto', 'Estado', 'Comprobante', 'Acciones']}>
+        <DataTable headers={['ID', 'Usuario', 'Email', 'Pedido', 'Método', 'Monto', 'Estado', 'Comprobante', 'Acciones']}>
           {payments.length === 0 ? (
             <tr>
-              <td colSpan="7" className="empty-cell">No hay pagos registrados.</td>
+              <td colSpan="9" className="empty-cell">No hay pagos registrados.</td>
             </tr>
           ) : (
             payments.map((p) => (
               <tr key={p.id}>
                 <td>#{p.id}</td>
+                <td>{p.user_name || `Usuario #${p.user_id}`}</td>
+                <td>{p.user_email || '—'}</td>
                 <td>#{p.order_id}</td>
                 <td>{p.method}</td>
                 <td>S/ {p.amount}</td>

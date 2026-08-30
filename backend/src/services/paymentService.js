@@ -1,22 +1,27 @@
 const db = require('../config/db');
 
 const list = async (userId, role) => {
-  let query = 'SELECT * FROM payments';
+  let query =
+    'SELECT p.*, u.full_name AS user_name, u.email AS user_email ' +
+    'FROM payments p LEFT JOIN users u ON p.user_id = u.id';
   const params = [];
   if (role !== 'admin') {
-    query += ' WHERE user_id = ?';
+    query += ' WHERE p.user_id = ?';
     params.push(userId);
   }
-  query += ' ORDER BY id DESC';
+  query += ' ORDER BY p.id DESC';
   const [rows] = await db.execute(query, params);
   return rows;
 };
 
 const getById = async (paymentId, userId, role) => {
-  let query = 'SELECT * FROM payments WHERE id = ?';
+  let query =
+    'SELECT p.*, u.full_name AS user_name, u.email AS user_email ' +
+    'FROM payments p LEFT JOIN users u ON p.user_id = u.id ' +
+    'WHERE p.id = ?';
   const params = [paymentId];
   if (role !== 'admin') {
-    query += ' AND user_id = ?';
+    query += ' AND p.user_id = ?';
     params.push(userId);
   }
   const [rows] = await db.execute(query, params);

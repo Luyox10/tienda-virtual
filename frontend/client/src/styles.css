@@ -1697,31 +1697,11 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-}
-
-.order-confirm-product {
-  padding: 0.75rem;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  border-radius: var(--radius);
+  gap: 0.5rem;
 }
 
 .order-confirm-product-name {
   font-weight: 700;
-  color: var(--text);
-  margin: 0 0 0.25rem;
-}
-
-.order-confirm-product-desc {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin: 0 0 0.25rem;
-  line-height: 1.35;
-}
-
-.order-confirm-product-meta {
-  font-weight: 600;
   color: var(--text);
   margin: 0;
 }

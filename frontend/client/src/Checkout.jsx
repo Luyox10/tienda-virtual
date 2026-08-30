@@ -163,15 +163,9 @@ export default function Checkout({ order, token, onDone, onBack }) {
 
             <div className="order-confirm-products">
               {(order.items || []).map((i) => (
-                <div key={i.id || i.product_id} className="order-confirm-product">
-                  <p className="order-confirm-product-name">{i.product_name}</p>
-                  {i.description && (
-                    <p className="order-confirm-product-desc">{i.description}</p>
-                  )}
-                  <p className="order-confirm-product-meta">
-                    {i.quantity} × S/ {Number(i.unit_price).toFixed(2)} — S/ {Number(i.subtotal).toFixed(2)}
-                  </p>
-                </div>
+                <p key={i.id || i.product_id} className="order-confirm-product-name">
+                  {i.product_name}
+                </p>
               ))}
             </div>
           </section>

@@ -33,10 +33,16 @@ export default function Header({ view, onNavigate, isAuthenticated, user, cartCo
 
   useEffect(() => {
     if (!isAuthenticated || !token) return
+    const today = new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
     const fetchOrders = async () => {
       try {
         const orders = await getOrders(token)
-        setAcceptedOrders(orders.filter((o) => o.status === 'ACCEPTED'))
+        const accepted = orders.filter((o) => {
+          if (o.status !== 'ACCEPTED') return false
+          const orderDate = new Date(o.created_at).toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
+          return orderDate === today
+        })
+        setAcceptedOrders(accepted)
       } catch {
         // ignore
       }
@@ -45,6 +51,16 @@ export default function Header({ view, onNavigate, isAuthenticated, user, cartCo
     const interval = setInterval(fetchOrders, 10000)
     return () => clearInterval(interval)
   }, [isAuthenticated, token])
+
+  useEffect(() => {
+    if (!user?.id) return
+    const todayIds = new Set(acceptedOrders.map((o) => o.id))
+    const pruned = readIds.filter((id) => todayIds.has(id))
+    if (pruned.length !== readIds.length) {
+      localStorage.setItem(`read-accepted-${user.id}`, JSON.stringify(pruned))
+      setReadIds(pruned)
+    }
+  }, [acceptedOrders, user?.id])
 
   const nav = [
     { key: 'home', label: 'Inicio' },
@@ -91,8 +107,10 @@ export default function Header({ view, onNavigate, isAuthenticated, user, cartCo
                 ) : (
                   acceptedOrders.map((o) => (
                     <button key={o.id} className="notification-item" onClick={() => { setNotifOpen(false); onNavigate('orders') }}>
-                      <span className="notification-text">El administrador acaba de aceptar tu pedido, entra a detalles para tener un mejor control de tu compra por favor</span>
-                      <span className="notification-order">Pedido #{o.id}</span>
+                      <span className="notification-title">Pedido #{String(o.id).padStart(4, '0')}</span>
+                      <span className="notification-meta">{new Date(o.created_at).toLocaleString('es-PE', { timeZone: 'America/Lima' })}</span>
+                      <span className="notification-meta">{o.first_product_name || 'Pedido'} · Turno {o.shift_name || '-'} · S/ {Number(o.total).toFixed(2)}</span>
+                      <span className="notification-order">El administrador acaba de aceptar tu pedido, entra a detalles para tener un mejor control de tu compra por favor</span>
                     </button>
                   ))
                 )}

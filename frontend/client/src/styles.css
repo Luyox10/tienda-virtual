@@ -1252,8 +1252,9 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   color: var(--text);
 }
 .notification-item:hover { background: var(--primary-light); }
-.notification-text { display: block; line-height: 1.35; }
-.notification-order { display: block; margin-top: 0.35rem; font-size: 0.8rem; color: var(--muted); }
+.notification-title { display: block; font-weight: 700; color: var(--primary); margin-bottom: 0.35rem; }
+.notification-meta { display: block; font-size: 0.85rem; color: var(--text); margin-bottom: 0.25rem; }
+.notification-order { display: block; margin-top: 0.5rem; font-size: 0.8rem; color: var(--muted); font-style: italic; }
 .notification-empty { padding: 0.75rem; text-align: center; color: var(--muted); font-size: 0.9rem; }
 .notif-badge { background: #ef4444 !important; }
 

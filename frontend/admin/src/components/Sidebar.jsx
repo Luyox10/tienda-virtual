@@ -13,7 +13,8 @@ export default function Sidebar({ active, onNavigate, onLogout, isOpen, onToggle
     <>
       <aside className={`sidebar ${isOpen ? 'open' : ''}`} aria-label="Menú de administración">
         <div className="sidebar-brand">
-          <img src="/imagenes/productos/logo_deliturnos.png" alt="DeliTurnos" className="sidebar-logo" />
+          <img src="/imagenes/productos/logo_deliturnos.png" alt="" className="sidebar-logo" aria-hidden="true" />
+          <span className="sidebar-title">Deli<span className="sidebar-title-accent">Turnos</span></span>
         </div>
 
         <div className="sidebar-section">MENÚ PRINCIPAL</div>

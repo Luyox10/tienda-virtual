@@ -225,11 +225,18 @@ function App() {
           </section>
 
           <section className="contact-card" aria-label="Información de contacto">
-            <div className="contact-intro">
-              <h2 className="contact-intro-title">¿Necesitas ayuda?</h2>
-              <p className="contact-intro-text">
-                Para mayor información, contáctanos a los siguientes números de WhatsApp. Ten en cuenta que nuestro horario de atención es de lunes a domingo de 6:00 a.m. a 11:00 p.m.
-              </p>
+            <div className="contact-hero">
+              <div className="contact-hero-content">
+                <span className="page-hero-eyebrow">AYUDA</span>
+                <h2 className="page-hero-title">¿Necesitas ayuda?</h2>
+                <p className="page-hero-subtitle">
+                  Para mayor información, contáctanos a los siguientes números de WhatsApp. Ten en cuenta que nuestro horario de atención es de lunes a domingo de 6:00 a.m. a 11:00 p.m.
+                </p>
+              </div>
+
+              <div className="contact-hero-visual" aria-hidden="true">
+                <img src="/imagenes/productos/logo_deliturnos.png" alt="DeliTurnos" className="contact-hero-img" />
+              </div>
             </div>
             <a className="contact-row" href="https://wa.me/51999888777" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
               <span className="contact-icon whatsapp-icon" aria-hidden="true">💬</span>

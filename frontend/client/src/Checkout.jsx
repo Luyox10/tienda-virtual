@@ -143,30 +143,37 @@ export default function Checkout({ order, token, onDone, onBack }) {
 
           <section className="card order-confirm">
             <h3>Pedido #{order.id}</h3>
+
+            {order.items?.[0] && (
+              <div className="order-confirm-visual">
+                {productImage(order.items[0]) ? (
+                  <img
+                    src={productImage(order.items[0])}
+                    alt={order.items[0].product_name}
+                    className="order-confirm-img"
+                  />
+                ) : (
+                  <div className="order-confirm-img placeholder">Sin imagen</div>
+                )}
+              </div>
+            )}
+
             <p className="checkout-label">Total a pagar</p>
             <p className="checkout-amount">S/ {order.total}</p>
-            <p className="checkout-label">Productos</p>
-            <ul className="checkout-items">
-              {(order.items || []).map((i) => {
-                const src = productImage(i)
-                return (
-                  <li key={i.id || i.product_id} className="checkout-item">
-                    {src ? (
-                      <img src={src} alt={i.product_name} className="checkout-item-img" />
-                    ) : (
-                      <div className="checkout-item-img placeholder">Sin imagen</div>
-                    )}
-                    <div className="checkout-item-info">
-                      <p className="checkout-item-name">{i.product_name}</p>
-                      {i.description && <p className="checkout-item-desc">{i.description}</p>}
-                      <p className="checkout-item-meta">
-                        {i.quantity} × S/ {Number(i.unit_price).toFixed(2)} — S/ {Number(i.subtotal).toFixed(2)}
-                      </p>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
+
+            <div className="order-confirm-products">
+              {(order.items || []).map((i) => (
+                <div key={i.id || i.product_id} className="order-confirm-product">
+                  <p className="order-confirm-product-name">{i.product_name}</p>
+                  {i.description && (
+                    <p className="order-confirm-product-desc">{i.description}</p>
+                  )}
+                  <p className="order-confirm-product-meta">
+                    {i.quantity} × S/ {Number(i.unit_price).toFixed(2)} — S/ {Number(i.subtotal).toFixed(2)}
+                  </p>
+                </div>
+              ))}
+            </div>
           </section>
         </div>
       )}

@@ -874,17 +874,13 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   margin-bottom: 1rem;
 }
 
-.qr-placeholder {
+.qr-image {
+  display: block;
   width: 200px;
-  height: 200px;
-  border: 2px dashed var(--border);
+  height: auto;
   border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  font-weight: 600;
-  background: var(--bg);
+  margin: 0 auto 1rem;
+  object-fit: contain;
 }
 
 .checkout-info {
@@ -1683,13 +1679,61 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   gap: 0.5rem;
 }
 
-.checkout-items li {
+.checkout-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding: 0.65rem 0;
   border-bottom: 1px solid var(--border);
   font-size: 0.95rem;
 }
 
-.checkout-items li:last-child { border-bottom: none; }
+.checkout-item:last-child { border-bottom: none; }
+
+.checkout-item-img {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.checkout-item-img.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.checkout-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.checkout-item-name {
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.checkout-item-desc {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.checkout-item-meta {
+  color: var(--text);
+  font-weight: 600;
+  margin: 0;
+}
 
 .method-options {
   display: flex;
@@ -1722,7 +1766,7 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
 .method-option input { margin: 0; }
 
 .yape-section { text-align: center; }
-.yape-section .qr-placeholder { margin: 0 auto 1rem; }
+.yape-section .qr-image { margin: 0 auto 1rem; }
 .yape-section .checkout-value { margin-bottom: 1rem; }
 .yape-section .checkout-steps { text-align: left; margin-bottom: 1.25rem; }
 

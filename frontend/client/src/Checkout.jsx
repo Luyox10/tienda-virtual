@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { createPayment } from './services/api'
+import { productImage } from './productImage'
 import { YAPE_NUMBER } from './config'
 
 const METHOD = 'YAPE'
@@ -80,9 +81,11 @@ export default function Checkout({ order, token, onDone, onBack }) {
           <section className="card payment-card">
             <h3>Método de pago</h3>
             <div className="yape-section">
-              <div className="qr-placeholder">
-                <span>QR Yape</span>
-              </div>
+              <img
+                className="qr-image"
+                src="/imagenes/productos/qr_prueba_delipedidos.jpg"
+                alt="QR Yape"
+              />
               <p className="checkout-label">Número Yape</p>
               <p className="checkout-value">{YAPE_NUMBER}</p>
               <ol className="checkout-steps">
@@ -144,11 +147,25 @@ export default function Checkout({ order, token, onDone, onBack }) {
             <p className="checkout-amount">S/ {order.total}</p>
             <p className="checkout-label">Productos</p>
             <ul className="checkout-items">
-              {(order.items || []).map((i) => (
-                <li key={i.id || i.product_id}>
-                  {i.product_name} × {i.quantity} — S/ {i.subtotal}
-                </li>
-              ))}
+              {(order.items || []).map((i) => {
+                const src = productImage(i)
+                return (
+                  <li key={i.id || i.product_id} className="checkout-item">
+                    {src ? (
+                      <img src={src} alt={i.product_name} className="checkout-item-img" />
+                    ) : (
+                      <div className="checkout-item-img placeholder">Sin imagen</div>
+                    )}
+                    <div className="checkout-item-info">
+                      <p className="checkout-item-name">{i.product_name}</p>
+                      {i.description && <p className="checkout-item-desc">{i.description}</p>}
+                      <p className="checkout-item-meta">
+                        {i.quantity} × S/ {Number(i.unit_price).toFixed(2)} — S/ {Number(i.subtotal).toFixed(2)}
+                      </p>
+                    </div>
+                  </li>
+                )
+              })}
             </ul>
           </section>
         </div>

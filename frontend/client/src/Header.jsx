@@ -48,7 +48,7 @@ export default function Header({ view, onNavigate, isAuthenticated, user, cartCo
       }
     }
     fetchOrders()
-    const interval = setInterval(fetchOrders, 10000)
+    const interval = setInterval(fetchOrders, 2000)
     return () => clearInterval(interval)
   }, [isAuthenticated, token])
 

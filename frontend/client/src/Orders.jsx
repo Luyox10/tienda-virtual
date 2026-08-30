@@ -33,10 +33,7 @@ export default function Orders({ token, onBack, onPay }) {
 
   useEffect(() => {
     loadOrders()
-    if (selected) return
-    const interval = setInterval(loadOrders, 10000)
-    return () => clearInterval(interval)
-  }, [loadOrders, selected])
+  }, [loadOrders])
 
   const viewDetail = (id) => {
     setLoading(true)

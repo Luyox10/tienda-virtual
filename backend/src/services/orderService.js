@@ -51,11 +51,6 @@ const create = async (userId, items) => {
   if (!firstProduct) throw new Error('Producto no encontrado');
 
   const orderShiftId = firstProduct.shift_id;
-  const [shiftRows] = await db.execute('SELECT * FROM shifts WHERE id = ?', [orderShiftId]);
-  if (shiftRows.length === 0) throw new Error('Turno no encontrado');
-
-  const shift = shiftRows[0];
-  if (!shift.is_enabled) throw new Error('El turno seleccionado no está habilitado');
 
   const today = new Date().toISOString().slice(0, 10);
   const conn = await db.getConnection();
@@ -65,13 +60,17 @@ const create = async (userId, items) => {
     let total = 0;
     const orderItems = [];
 
+    const [shiftRows] = await conn.execute('SELECT * FROM shifts');
+    const shiftMap = new Map(shiftRows.map((s) => [s.id, s]));
+
     for (const item of items) {
       const product = await productService.getById(item.product_id);
       if (!product) throw new Error('Producto no encontrado');
       if (!product.is_active) throw new Error(`Producto ${product.name} está inactivo`);
-      if (product.shift_id !== orderShiftId) {
-        throw new Error(`Producto ${product.name} no pertenece al turno seleccionado`);
-      }
+
+      const shift = shiftMap.get(product.shift_id);
+      if (!shift) throw new Error(`Producto ${product.name} no tiene un turno válido`);
+      if (!shift.is_enabled) throw new Error(`El turno de ${product.name} no está habilitado`);
 
       const quantity = Number(item.quantity);
       if (!Number.isInteger(quantity) || quantity <= 0) {

@@ -22,21 +22,17 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
 
   const removeItem = (id) => onUpdate(id, 0)
 
-  const cartShiftIds = new Set(
-    cart.map((item) => findProduct(item.product_id)?.shift_id).filter(Boolean)
-  )
-  const cartShiftId = cartShiftIds.size === 1 ? [...cartShiftIds][0] : null
-  const cartShift = (shifts || []).find((s) => s.id === cartShiftId)
-  const hasMixedShifts = cartShiftIds.size > 1
-  const isShiftOpen = cart.length > 0 && !!cartShift?.is_open
+  const shiftEnabled = (productId) => {
+    const p = findProduct(productId)
+    const s = (shifts || []).find((shift) => shift.id === p?.shift_id)
+    return !!s?.is_enabled
+  }
 
-  const checkout = async () => {
-    if (hasMixedShifts) {
-      setError('Los productos deben pertenecer al mismo turno')
-      return
-    }
-    if (!isShiftOpen) {
-      setError('El turno seleccionado no está habilitado')
+  const cartTotal = cart.reduce((sum, item) => sum + itemSubtotal(item), 0)
+
+  const checkoutAll = async () => {
+    if (cart.some((item) => !shiftEnabled(item.product_id))) {
+      setError('Alguno de los productos pertenece a un turno no habilitado')
       return
     }
     if (!isAuthenticated) {
@@ -58,6 +54,30 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
     }
   }
 
+  const checkoutOne = async (productId) => {
+    if (!shiftEnabled(productId)) {
+      setError('El turno de este producto no está habilitado')
+      return
+    }
+    if (!isAuthenticated) {
+      onLogin()
+      return
+    }
+    const item = cart.find((i) => i.product_id === productId)
+    if (!item) return
+    try {
+      const order = await createOrder(
+        [{ product_id: item.product_id, quantity: item.quantity }],
+        token
+      )
+      onUpdate(productId, 0)
+      onOrder(order)
+      setError(null)
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   return (
     <main className="page cart-page">
       <h2 className="page-title">
@@ -68,14 +88,6 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
       </h2>
 
       {error && <p className="error">{error}</p>}
-
-      {cart.length > 0 && hasMixedShifts && (
-        <p className="error">Los productos deben pertenecer al mismo turno para poder pagar.</p>
-      )}
-
-      {cart.length > 0 && !hasMixedShifts && !isShiftOpen && (
-        <p className="error">El turno seleccionado no está habilitado. No se pueden realizar pagos en este momento.</p>
-      )}
 
       {cart.length === 0 ? (
         <p className="empty">El carrito está vacío. Agrega productos para comenzar.</p>
@@ -117,8 +129,8 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
                   <div className="cart-item-actions">
                     <button
                       className="btn small success"
-                      onClick={checkout}
-                      disabled={!isShiftOpen || hasMixedShifts}
+                      onClick={() => checkoutOne(item.product_id)}
+                      disabled={!shiftEnabled(item.product_id)}
                     >
                       Pagar
                     </button>
@@ -133,6 +145,18 @@ export default function Cart({ cart, products, isAuthenticated, token, shifts, o
               )
             })}
           </ul>
+
+          {cart.length > 1 && (
+            <div className="cart-footer">
+              <div className="cart-total">
+                <span>Total</span>
+                <span className="cart-total-amount">S/ {cartTotal.toFixed(2)}</span>
+              </div>
+              <button className="btn success" onClick={checkoutAll}>
+                Pagar todo
+              </button>
+            </div>
+          )}
         </>
       )}
     </main>

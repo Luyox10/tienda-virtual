@@ -930,6 +930,78 @@ select {
 }
 
 /* Orders */
+.order-row td { vertical-align: middle; }
+
+.order-id {
+  font-family: ui-monospace, monospace;
+  font-weight: 700;
+  color: var(--admin-text);
+}
+
+.order-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.order-product-name {
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.order-client-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.order-client-cell strong {
+  color: var(--admin-text);
+  font-weight: 600;
+}
+
+.order-client-meta {
+  font-size: 0.8rem;
+  color: var(--admin-muted);
+}
+
+.order-total {
+  color: var(--admin-orange);
+}
+
+.order-client-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.order-client-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--admin-orange);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.order-client-info strong {
+  font-size: 1rem;
+  color: var(--admin-text);
+}
+
+.order-client-info p {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--admin-muted);
+}
+
 .orders-header {
   display: flex;
   align-items: center;

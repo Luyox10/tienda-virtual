@@ -4,10 +4,10 @@ const availabilityService = require('./availabilityService');
 
 const list = async (userId, role) => {
   let query =
-    'SELECT o.*, s.name AS shift_name, ' +
+    'SELECT o.*, s.name AS shift_name, u.email AS user_email, u.name AS user_name, u.phone AS user_phone, ' +
     '(SELECT p.image_url FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = o.id ORDER BY oi.id LIMIT 1) AS first_product_image, ' +
     '(SELECT p.name FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = o.id ORDER BY oi.id LIMIT 1) AS first_product_name ' +
-    'FROM orders o LEFT JOIN shifts s ON o.shift_id = s.id';
+    'FROM orders o LEFT JOIN shifts s ON o.shift_id = s.id LEFT JOIN users u ON o.user_id = u.id';
   const params = [];
   if (role !== 'admin') {
     query += ' WHERE o.user_id = ?';
@@ -20,8 +20,9 @@ const list = async (userId, role) => {
 
 const getById = async (orderId, userId, role) => {
   let query =
-    'SELECT o.*, s.name AS shift_name ' +
+    'SELECT o.*, s.name AS shift_name, u.email AS user_email, u.name AS user_name, u.phone AS user_phone ' +
     'FROM orders o LEFT JOIN shifts s ON o.shift_id = s.id ' +
+    'LEFT JOIN users u ON o.user_id = u.id ' +
     'WHERE o.id = ?';
   const params = [orderId];
   if (role !== 'admin') {

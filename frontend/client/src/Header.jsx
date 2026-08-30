@@ -32,7 +32,11 @@ export default function Header({ view, onNavigate, isAuthenticated, user, cartCo
   }, [user?.id])
 
   useEffect(() => {
-    if (!isAuthenticated || !token) return
+    if (!isAuthenticated || !token) {
+      setAcceptedOrders([])
+      setNotifOpen(false)
+      return
+    }
     const today = new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
     const fetchOrders = async () => {
       try {

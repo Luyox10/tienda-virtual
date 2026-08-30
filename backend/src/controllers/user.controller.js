@@ -9,6 +9,15 @@ const list = async (req, res) => {
   }
 };
 
+const update = async (req, res) => {
+  try {
+    const user = await userService.update(req.params.id, req.body);
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 const remove = async (req, res) => {
   try {
     await userService.remove(req.params.id);
@@ -18,4 +27,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { list, remove };
+module.exports = { list, update, remove };

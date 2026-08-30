@@ -30,10 +30,26 @@ const create = async ({ role_id, full_name, email, password_hash, phone }) => {
   return findById(result.insertId);
 };
 
+const update = async (id, { full_name, email, phone, is_active }) => {
+  const [result] = await db.execute(
+    'UPDATE users SET full_name = ?, email = ?, phone = ?, is_active = ? WHERE id = ?',
+    [full_name, email, phone || null, is_active, id]
+  );
+  if (result.affectedRows === 0) throw new Error('Usuario no encontrado');
+  return findById(id);
+};
+
 const remove = async (id) => {
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
+
+    const [userRows] = await conn.execute(
+      'SELECT u.id, r.name AS role FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?',
+      [id]
+    );
+    if (userRows.length === 0) throw new Error('Usuario no encontrado');
+    if (userRows[0].role === 'admin') throw new Error('No se puede eliminar un administrador');
 
     const [orderRows] = await conn.execute('SELECT id FROM orders WHERE user_id = ?', [id]);
     const orderIds = orderRows.map((o) => o.id);
@@ -59,4 +75,4 @@ const remove = async (id) => {
   }
 };
 
-module.exports = { findByEmail, findById, list, create, remove };
+module.exports = { findByEmail, findById, list, create, update, remove };

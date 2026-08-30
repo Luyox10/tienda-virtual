@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getUsers, getOrders, deleteUser } from '../api'
+import { getUsers, getOrders, updateUser, deleteUser } from '../api'
 import PageHeader from '../components/PageHeader'
 import StatusBadge from '../components/StatusBadge'
 import DataTable from '../components/DataTable'
@@ -14,6 +14,7 @@ export default function Users({ token }) {
   const [error, setError] = useState(null)
   const [message, setMessage] = useState(null)
   const [viewUser, setViewUser] = useState(null)
+  const [editUser, setEditUser] = useState(null)
   const [deleteConfirm, setDeleteConfirm] = useState(null)
 
   const load = () => {
@@ -37,6 +38,23 @@ export default function Users({ token }) {
       await deleteUser(id, token)
       setMessage('Usuario eliminado')
       setDeleteConfirm(null)
+      load()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  const handleUpdate = async (e) => {
+    if (e && e.preventDefault) e.preventDefault()
+    try {
+      await updateUser(editUser.id, {
+        full_name: editUser.full_name,
+        email: editUser.email,
+        phone: editUser.phone,
+        is_active: editUser.is_active,
+      }, token)
+      setMessage('Usuario actualizado')
+      setEditUser(null)
       load()
     } catch (err) {
       setError(err.message)
@@ -98,9 +116,15 @@ export default function Users({ token }) {
                 <td>{orderCount(u.id)}</td>
                 <td>
                   <button className="btn small" onClick={() => setViewUser(u)}>Ver</button>
-                  <button className="btn small danger" onClick={() => setDeleteConfirm(u)}>
-                    Eliminar
-                  </button>
+                  {u.role === 'admin' ? (
+                    <button className="btn small" onClick={() => setEditUser(u)}>
+                      Editar
+                    </button>
+                  ) : (
+                    <button className="btn small danger" onClick={() => setDeleteConfirm(u)}>
+                      Eliminar
+                    </button>
+                  )}
                 </td>
               </tr>
             ))
@@ -119,6 +143,52 @@ export default function Users({ token }) {
             <p><strong>Registro:</strong> {new Date(viewUser.created_at).toLocaleDateString('es-PE')}</p>
             <p><strong>Pedidos:</strong> {orderCount(viewUser.id)}</p>
           </div>
+        </Modal>
+      )}
+
+      {editUser && (
+        <Modal
+          title="Editar usuario"
+          onClose={() => setEditUser(null)}
+          onConfirm={handleUpdate}
+          confirmText="Guardar cambios"
+          confirmClass="btn"
+          cancelText="Cancelar"
+        >
+          <form onSubmit={handleUpdate} className="form user-form" onClick={(e) => e.stopPropagation()}>
+            <label>
+              Nombre
+              <input
+                value={editUser.full_name || ''}
+                onChange={(e) => setEditUser({ ...editUser, full_name: e.target.value })}
+                required
+              />
+            </label>
+            <label>
+              Correo
+              <input
+                type="email"
+                value={editUser.email || ''}
+                onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
+                required
+              />
+            </label>
+            <label>
+              Teléfono
+              <input
+                value={editUser.phone || ''}
+                onChange={(e) => setEditUser({ ...editUser, phone: e.target.value })}
+              />
+            </label>
+            <label className="form-check">
+              <input
+                type="checkbox"
+                checked={editUser.is_active}
+                onChange={(e) => setEditUser({ ...editUser, is_active: e.target.checked })}
+              />
+              <span>Activo</span>
+            </label>
+          </form>
         </Modal>
       )}
 

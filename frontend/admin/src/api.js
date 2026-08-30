@@ -76,6 +76,7 @@ export const login = (body) => postJson('/auth/login', body);
 export const getProducts = () => getJson('/products');
 export const getShifts = () => getJson('/shifts');
 export const getUsers = (token) => authGetJson('/users', token);
+export const updateUser = (id, body, token) => authPatchJson(`/users/${id}`, body, token);
 export const deleteUser = (id, token) => authDeleteJson(`/users/${id}`, token);
 export const deleteProduct = (id, token) => authDeleteJson(`/admin/products/${id}`, token);
 export const uploadImage = (base64, token) => authPostJson('/admin/upload', { image: base64 }, token);

@@ -2427,3 +2427,76 @@ h1, h2, h3 { margin: 0.75rem 0 0.5rem; font-weight: 700; color: var(--text); }
   /* General page padding */
   .page { padding: 0.75rem; }
 }
+
+/* Profile mobile */
+@media (max-width: 640px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .profile-sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    overflow-x: auto;
+  }
+
+  .profile-link {
+    flex: 1 1 auto;
+    min-width: 120px;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .profile-content {
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .profile-hero {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .avatar-big {
+    width: 64px;
+    height: 64px;
+    font-size: 2rem;
+  }
+
+  .profile-section h3 {
+    font-size: 1.1rem;
+  }
+
+  .field-value {
+    font-size: 1rem;
+  }
+
+  .payment-method-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .toggle-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+  }
+
+  .toggle-row input {
+    width: 50px;
+    height: 28px;
+  }
+
+  .password-form {
+    max-width: 100%;
+  }
+}

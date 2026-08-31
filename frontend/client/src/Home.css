@@ -482,3 +482,47 @@
     gap: 0.5rem;
   }
 }
+
+@media (max-width: 480px) {
+  .home-hero {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .home-hero-title {
+    font-size: 1.75rem;
+  }
+
+  .home-hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .home-hero-img {
+    max-width: 220px;
+  }
+
+  .home-hero-cta {
+    padding: 0.7rem 1.4rem;
+    font-size: 0.9rem;
+  }
+
+  .home-product-card {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .home-product-img-wrap {
+    height: 160px;
+    min-height: 160px;
+  }
+
+  .home-product-body {
+    padding: 1rem;
+  }
+
+  .home-shifts-grid,
+  .home-products-grid,
+  .home-benefits-grid {
+    gap: 0.75rem;
+  }
+}

@@ -15,7 +15,6 @@ export default function Register({ onToggle, onSuccess }) {
     const email = form.get('email')
     const password = form.get('password')
     const confirm = form.get('confirm')
-    const phone = form.get('phone')
 
     if (!full_name || !email || !password) {
       setError('Completa todos los campos obligatorios')
@@ -35,7 +34,6 @@ export default function Register({ onToggle, onSuccess }) {
       await register({
         full_name,
         email,
-        phone,
         password,
       })
       onSuccess?.()
@@ -69,13 +67,6 @@ export default function Register({ onToggle, onSuccess }) {
             placeholder="tu@correo.com"
             required
             autoComplete="email"
-          />
-          <label htmlFor="register-phone">Teléfono (opcional)</label>
-          <input
-            id="register-phone"
-            name="phone"
-            placeholder="999 999 999"
-            autoComplete="tel"
           />
           <label htmlFor="register-password">Contraseña</label>
           <input

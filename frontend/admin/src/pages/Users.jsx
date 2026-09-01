@@ -100,16 +100,17 @@ export default function Users({ token }) {
           </div>
         </div>
 
-        <DataTable headers={['Nombre', 'Correo', 'Registro', 'Rol', 'Estado', 'Pedidos', 'Acciones']}>
+        <DataTable headers={['Nombre', 'Correo', 'Celular', 'Registro', 'Rol', 'Estado', 'Pedidos', 'Acciones']}>
           {filtered.length === 0 ? (
             <tr>
-              <td colSpan="7" className="empty-cell">No se encontraron usuarios.</td>
+              <td colSpan="8" className="empty-cell">No se encontraron usuarios.</td>
             </tr>
           ) : (
             filtered.map((u) => (
               <tr key={u.id}>
                 <td>{u.full_name || '-'}</td>
                 <td>{u.email}</td>
+                <td>{u.phone || '-'}</td>
                 <td>{new Date(u.created_at).toLocaleDateString('es-PE')}</td>
                 <td><StatusBadge status={u.role} /></td>
                 <td><StatusBadge status={u.is_active ? 'active' : 'inactive'} /></td>

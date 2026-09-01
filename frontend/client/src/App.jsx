@@ -227,18 +227,18 @@ function App() {
               </div>
 
               <div className="contact-rows">
-                <a className="contact-row" href="https://wa.me/51999888777" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                <a className="contact-row" href="https://wa.me/51953790843" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
                   <span className="contact-icon whatsapp-icon" aria-hidden="true">💬</span>
                   <div className="contact-info">
                     <span className="contact-label">WhatsApp</span>
-                    <span className="contact-value">999 888 777</span>
+                    <span className="contact-value">953 790 843</span>
                   </div>
                 </a>
-                <a className="contact-row" href="https://wa.me/51999111222" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                <a className="contact-row" href="https://wa.me/51940125334" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
                   <span className="contact-icon whatsapp-icon" aria-hidden="true">💬</span>
                   <div className="contact-info">
                     <span className="contact-label">WhatsApp</span>
-                    <span className="contact-value">999 111 222</span>
+                    <span className="contact-value">940 125 334</span>
                   </div>
                 </a>
                 <div className="contact-row" aria-label="Horario de atención">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from './context/AuthContext'
 import { getProducts } from './services/productsService'
-import { getShifts, getCurrentShift } from './services/shiftsService'
+import { getShifts } from './services/shiftsService'
 import { createOrder } from './services/api'
 import Loading from './Loading'
 import Header from './Header'
@@ -90,24 +90,49 @@ function App() {
     } catch {}
   }
 
-  const loadData = (silent = false) => {
-    if (!silent) {
-      setLoading(true)
-      setError(null)
+  const computeCurrentShift = (shifts) => {
+    const now = new Date().toLocaleTimeString('en-GB', { timeZone: 'America/Lima', hour12: false })
+    const found = (shifts || []).find((s) => s.start_time <= now && s.end_time >= now)
+    return found ? { current: { ...found, is_open: !!found.is_enabled } } : { current: null }
+  }
+
+  const refresh = async () => {
+    try {
+      const [s, p] = await Promise.all([getShifts(), getProducts()])
+      const c = computeCurrentShift(s)
+      setShifts(s)
+      setCurrent(c)
+      setProducts(p)
+      saveCache(p, s, c)
+    } catch {}
+  }
+
+  const loadProducts = async (shifts, current) => {
+    try {
+      const p = await getProducts()
+      setProducts(p)
+      saveCache(p, shifts, current)
+    } catch (e) {
+      setError(e.message)
     }
-    Promise.all([getProducts(), getShifts(), getCurrentShift()])
-      .then(([p, s, c]) => {
-        setProducts(p)
-        setShifts(s)
-        setCurrent(c)
-        saveCache(p, s, c)
-      })
-      .catch((e) => {
-        if (!silent) setError(e.message)
-      })
-      .finally(() => {
-        if (!silent) setLoading(false)
-      })
+  }
+
+  const loadInitialData = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const s = await getShifts()
+      const c = computeCurrentShift(s)
+      setShifts(s)
+      setCurrent(c)
+      setLoading(false)
+      const p = await getProducts()
+      setProducts(p)
+      saveCache(p, s, c)
+    } catch (e) {
+      setError(e.message)
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -117,11 +142,11 @@ function App() {
       setShifts(cached.shifts)
       setCurrent(cached.current)
       setLoading(false)
-      loadData(true)
+      refresh()
     } else {
-      loadData()
+      loadInitialData()
     }
-    const interval = setInterval(() => loadData(true), 5000)
+    const interval = setInterval(refresh, 5000)
     return () => clearInterval(interval)
   }, [])
 

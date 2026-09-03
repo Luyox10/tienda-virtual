@@ -83,7 +83,7 @@ export default function Checkout({ order, token, onDone, onBack }) {
             <div className="yape-section">
               <img
                 className="qr-image"
-                src="/imagenes/productos/qr_prueba_delipedidos.jpg"
+                src="/imagenes/productos/qr_prueba_delipedidos.png"
                 alt="QR Yape"
               />
               <p className="checkout-label">Número Yape</p>

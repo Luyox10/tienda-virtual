@@ -9,7 +9,7 @@ const list = async (userId, role) => {
     query += ' WHERE p.user_id = ?';
     params.push(userId);
   }
-  query += ' ORDER BY p.id DESC';
+  query += ' ORDER BY p.id DESC LIMIT 200';
   const [rows] = await db.execute(query, params);
   return rows;
 };

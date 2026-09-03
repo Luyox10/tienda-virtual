@@ -5,9 +5,17 @@ const availabilityService = require('./availabilityService');
 const list = async (userId, role) => {
   let query =
     'SELECT o.*, s.name AS shift_name, u.email AS user_email, u.full_name AS user_name, u.phone AS user_phone, ' +
-    '(SELECT p.image_url FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = o.id ORDER BY oi.id LIMIT 1) AS first_product_image, ' +
-    '(SELECT p.name FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = o.id ORDER BY oi.id LIMIT 1) AS first_product_name ' +
-    'FROM orders o LEFT JOIN shifts s ON o.shift_id = s.id LEFT JOIN users u ON o.user_id = u.id';
+    'first_p.image_url AS first_product_image, first_p.name AS first_product_name ' +
+    'FROM orders o ' +
+    'LEFT JOIN shifts s ON o.shift_id = s.id ' +
+    'LEFT JOIN users u ON o.user_id = u.id ' +
+    'LEFT JOIN ( ' +
+    '  SELECT oi.order_id, p.image_url, p.name ' +
+    '  FROM order_items oi ' +
+    '  JOIN products p ON oi.product_id = p.id ' +
+    '  JOIN (SELECT order_id, MIN(id) AS min_id FROM order_items GROUP BY order_id) AS first_oi ' +
+    '    ON first_oi.min_id = oi.id ' +
+    ') AS first_p ON first_p.order_id = o.id';
   const params = [];
   if (role !== 'admin') {
     query += ' WHERE o.user_id = ?';

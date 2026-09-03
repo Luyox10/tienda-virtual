@@ -22,9 +22,11 @@ export default function Dashboard({ token, onNavigate }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    setLoading(true)
-    setError(null)
+  const load = (silent = false) => {
+    if (!silent) {
+      setLoading(true)
+      setError(null)
+    }
     Promise.all([
       getDashboard(token).catch(() => null),
       getShifts().catch(() => []),
@@ -35,8 +37,14 @@ export default function Dashboard({ token, onNavigate }) {
         setShifts(s)
         setOrders(o)
       })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false))
+      .catch((e) => { if (!silent) setError(e.message) })
+      .finally(() => { if (!silent) setLoading(false) })
+  }
+
+  useEffect(() => {
+    load()
+    const interval = setInterval(() => load(true), 5000)
+    return () => clearInterval(interval)
   }, [token])
 
   const computedStats = useMemo(() => {

@@ -21,19 +21,48 @@ export default function Orders({ token }) {
   const [message, setMessage] = useState(null)
   const [rejectReason, setRejectReason] = useState('')
 
-  const load = () => {
-    setLoading(true)
+  const CACHE_TTL = 5 * 60 * 1000
+  const loadFromCache = () => {
+    try {
+      const raw = localStorage.getItem('deliturnos_admin_orders_payments')
+      if (!raw) return null
+      const { orders, payments, ts } = JSON.parse(raw)
+      if (Date.now() - ts < CACHE_TTL) return { orders, payments }
+    } catch {}
+    return null
+  }
+  const saveCache = (orders, payments) => {
+    try {
+      localStorage.setItem('deliturnos_admin_orders_payments', JSON.stringify({ orders, payments, ts: Date.now() }))
+    } catch {}
+  }
+
+  const load = (silent = false) => {
+    if (!silent) setLoading(true)
     setError(null)
     Promise.all([getOrders(token), getPayments(token)])
       .then(([o, p]) => {
         setOrders(o)
         setPayments(p)
+        saveCache(o, p)
       })
       .catch((e) => setError(e.message))
-      .finally(() => setLoading(false))
+      .finally(() => { if (!silent) setLoading(false) })
   }
 
-  useEffect(() => { load() }, [token])
+  useEffect(() => {
+    const cached = loadFromCache()
+    if (cached) {
+      setOrders(cached.orders)
+      setPayments(cached.payments)
+      setLoading(false)
+      load(true)
+    } else {
+      load()
+    }
+    const interval = setInterval(() => load(true), 3000)
+    return () => clearInterval(interval)
+  }, [token])
 
   const view = (order) => {
     getOrder(order.id, token)

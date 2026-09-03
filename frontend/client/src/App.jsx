@@ -74,6 +74,22 @@ function App() {
     }
   }, [isAuthenticated, postLoginAction, token, cart])
 
+  const CACHE_TTL = 5 * 60 * 1000
+  const loadFromCache = () => {
+    try {
+      const raw = localStorage.getItem('deliturnos_catalog')
+      if (!raw) return null
+      const { products, shifts, current, ts } = JSON.parse(raw)
+      if (Date.now() - ts < CACHE_TTL) return { products, shifts, current }
+    } catch {}
+    return null
+  }
+  const saveCache = (products, shifts, current) => {
+    try {
+      localStorage.setItem('deliturnos_catalog', JSON.stringify({ products, shifts, current, ts: Date.now() }))
+    } catch {}
+  }
+
   const loadData = (silent = false) => {
     if (!silent) {
       setLoading(true)
@@ -84,6 +100,7 @@ function App() {
         setProducts(p)
         setShifts(s)
         setCurrent(c)
+        saveCache(p, s, c)
       })
       .catch((e) => {
         if (!silent) setError(e.message)
@@ -94,7 +111,16 @@ function App() {
   }
 
   useEffect(() => {
-    loadData()
+    const cached = loadFromCache()
+    if (cached) {
+      setProducts(cached.products)
+      setShifts(cached.shifts)
+      setCurrent(cached.current)
+      setLoading(false)
+      loadData(true)
+    } else {
+      loadData()
+    }
     const interval = setInterval(() => loadData(true), 5000)
     return () => clearInterval(interval)
   }, [])

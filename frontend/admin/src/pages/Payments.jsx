@@ -15,21 +15,46 @@ export default function Payments({ token }) {
   const [rejectModal, setRejectModal] = useState(null)
   const [viewProof, setViewProof] = useState(null)
 
-  const load = () => {
-    setLoading(true)
+  const CACHE_TTL = 5 * 60 * 1000
+  const loadFromCache = () => {
+    try {
+      const raw = localStorage.getItem('deliturnos_admin_payments')
+      if (!raw) return null
+      const { payments, ts } = JSON.parse(raw)
+      if (Date.now() - ts < CACHE_TTL) return { payments }
+    } catch {}
+    return null
+  }
+  const saveCache = (payments) => {
+    try {
+      localStorage.setItem('deliturnos_admin_payments', JSON.stringify({ payments, ts: Date.now() }))
+    } catch {}
+  }
+
+  const load = (silent = false) => {
+    if (!silent) setLoading(true)
     setError(null)
     getPayments(token)
       .then((data) => {
         setPayments(data)
-        setLoading(false)
+        saveCache(data)
       })
-      .catch((e) => {
-        setError(e.message)
-        setLoading(false)
-      })
+      .catch((e) => setError(e.message))
+      .finally(() => { if (!silent) setLoading(false) })
   }
 
-  useEffect(() => { load() }, [token])
+  useEffect(() => {
+    const cached = loadFromCache()
+    if (cached) {
+      setPayments(cached.payments)
+      setLoading(false)
+      load(true)
+    } else {
+      load()
+    }
+    const interval = setInterval(() => load(true), 3000)
+    return () => clearInterval(interval)
+  }, [token])
 
   const approve = async (id) => {
     try {
